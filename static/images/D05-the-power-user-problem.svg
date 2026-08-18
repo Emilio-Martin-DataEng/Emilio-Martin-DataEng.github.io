@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img"
+     aria-labelledby="d05-title d05-desc" width="960" height="540">
+  <title id="d05-title">The power user problem</title>
+  <desc id="d05-desc">Many reports, exports and spreadsheets converge on one person, who
+  then feeds answers back out to everyone waiting. One person is the bottleneck between
+  all of the data and all of the questions.</desc>
+
+  <!--
+    D05 - The Power User Problem. Bottleneck pattern.
+    Was "Diagram A" in the Customer Deck v3.0 specification; numbered into the
+    canonical set here.
+
+    Deliberately carries NO Ember. The Visual Design Standard reserves the accent
+    for fact, insight, decision and value - a diagram about the problem has none
+    of those in it. Withholding it here is what makes it mean something when it
+    appears in D06 and D01. The problem is drawn in ink and steel, and it is
+    supposed to feel flat.
+
+    Geometry:
+      sources  x  40..190, five rows from y 96, pitch 76 (last ends y 434)
+      person   x 410..590, y 200..340, centre y 270
+      waiting  x 770..930, four rows from y 126, pitch 76 (last ends y 404)
+  -->
+
+  <style>
+    .d05 {
+      --ink: var(--fs-text-primary, #0b0b0b);
+      --muted: var(--fs-text-muted, #898781);
+      --second: var(--fs-text-secondary, #52514e);
+      --line: var(--fs-grid, #e1e0d9);
+      --surface: var(--fs-surface, #fcfcfb);
+      font-family: "Sora", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .box { fill: none; stroke: var(--line); stroke-width: 1.5; }
+    .person { fill: var(--ink); stroke: none; }
+    .thread { fill: none; stroke: var(--muted); stroke-width: 1.25; opacity: .85; }
+    .label { font-size: 22px; font-weight: 600; fill: var(--ink); text-anchor: middle; }
+    .label-on-dark { fill: var(--surface); }
+    .small {
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 13px; fill: var(--second); text-anchor: middle;
+    }
+    .tiny {
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 12px; fill: var(--muted); text-anchor: middle;
+    }
+    .eyebrow {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 11px; letter-spacing: .09em; fill: var(--muted); text-anchor: middle;
+    }
+  </style>
+
+  <g class="d05">
+
+    <text class="eyebrow" x="115" y="66">EVERY SOURCE</text>
+    <text class="eyebrow" x="500" y="66">ONE PERSON</text>
+    <text class="eyebrow" x="850" y="66">EVERYONE ELSE</text>
+
+    <!-- Sources: reports, exports, spreadsheets -->
+    <rect class="box" x="40" y="96"  width="150" height="44" rx="8"/>
+    <rect class="box" x="40" y="172" width="150" height="44" rx="8"/>
+    <rect class="box" x="40" y="248" width="150" height="44" rx="8"/>
+    <rect class="box" x="40" y="324" width="150" height="44" rx="8"/>
+    <rect class="box" x="40" y="400" width="150" height="44" rx="8"/>
+    <text class="tiny" x="115" y="123">Sales export</text>
+    <text class="tiny" x="115" y="199">Stock report</text>
+    <text class="tiny" x="115" y="275">Finance extract</text>
+    <text class="tiny" x="115" y="351">Last month's file</text>
+    <text class="tiny" x="115" y="427">Another spreadsheet</text>
+
+    <!-- Everything converges on one person -->
+    <path class="thread" d="M190 118 C300 118 320 270 410 270"/>
+    <path class="thread" d="M190 194 C300 194 330 270 410 270"/>
+    <path class="thread" d="M190 270 L410 270"/>
+    <path class="thread" d="M190 346 C300 346 330 270 410 270"/>
+    <path class="thread" d="M190 422 C300 422 320 270 410 270"/>
+
+    <rect class="person" x="410" y="200" width="180" height="140" rx="16"/>
+    <text class="label label-on-dark" x="500" y="264">One</text>
+    <text class="label label-on-dark" x="500" y="292">analyst</text>
+    <text class="small" x="500" y="374">Rebuilds it every week</text>
+    <text class="small" x="500" y="396">by hand</text>
+
+    <!-- And fans back out to everyone waiting -->
+    <path class="thread" d="M590 270 C680 270 700 154 770 154"/>
+    <path class="thread" d="M590 270 C680 270 710 230 770 230"/>
+    <path class="thread" d="M590 270 C680 270 710 306 770 306"/>
+    <path class="thread" d="M590 270 C680 270 700 382 770 382"/>
+
+    <rect class="box" x="770" y="126" width="160" height="56" rx="8"/>
+    <rect class="box" x="770" y="202" width="160" height="56" rx="8"/>
+    <rect class="box" x="770" y="278" width="160" height="56" rx="8"/>
+    <rect class="box" x="770" y="354" width="160" height="56" rx="8"/>
+    <text class="tiny" x="850" y="152">Why are margins</text>
+    <text class="tiny" x="850" y="168">down?</text>
+    <text class="tiny" x="850" y="228">Which customers</text>
+    <text class="tiny" x="850" y="244">are profitable?</text>
+    <text class="tiny" x="850" y="304">What changed</text>
+    <text class="tiny" x="850" y="320">this month?</text>
+    <text class="tiny" x="850" y="380">Are we on</text>
+    <text class="tiny" x="850" y="396">target?</text>
+
+    <text class="small" x="480" y="482">The person who knows the business best spends the week</text>
+    <text class="small" x="480" y="504">producing numbers instead of acting on them.</text>
+
+  </g>
+</svg>

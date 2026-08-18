@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img"
+     aria-labelledby="d06-title d06-desc" width="960" height="540">
+  <title id="d06-title">What a question costs</title>
+  <desc id="d06-desc">Two routes from the same question. Today: question, reports,
+  spreadsheets, a meeting, then an answer, taking days. With FactSmith: question,
+  FactSmith, a trusted answer, taking minutes.</desc>
+
+  <!--
+    D06 - What A Question Costs. Comparison pattern.
+    Was "Diagram B" in the Customer Deck v3.0 specification; numbered into the
+    canonical set here.
+
+    Minimal chevrons, matching D01's transformation language - this is a journey,
+    unlike D02's layers, where connectors are forbidden. Ember appears exactly
+    once, on the trusted answer, because that is the only value moment on the
+    page. The top row is deliberately longer, busier and greyer than the bottom
+    one: the comparison should be legible before a single word is read.
+
+    Geometry:
+      row 1  y 150..230, five boxes w140 from x30, pitch 190, chevrons at gap centres
+      row 2  y 350..430, three boxes centred: 160..300, 350..550, 600..800
+  -->
+
+  <style>
+    .d06 {
+      --ink: var(--fs-text-primary, #0b0b0b);
+      --muted: var(--fs-text-muted, #898781);
+      --second: var(--fs-text-secondary, #52514e);
+      --line: var(--fs-grid, #e1e0d9);
+      --surface: var(--fs-surface, #fcfcfb);
+      --accent: var(--fs-accent, #f26f1e);
+      font-family: "Sora", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .box { fill: none; stroke: var(--line); stroke-width: 1.5; }
+    .box-ink { fill: var(--ink); stroke: none; }
+    .box-accent { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .step { font-size: 16px; font-weight: 600; fill: var(--ink); text-anchor: middle; }
+    .step-on-dark { fill: var(--surface); }
+    .step-accent { fill: var(--accent); }
+    .chev { fill: none; stroke: var(--muted); stroke-width: 2;
+            stroke-linecap: round; stroke-linejoin: round; }
+    .chev-accent { stroke: var(--accent); }
+    .eyebrow {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 12px; letter-spacing: .09em; fill: var(--muted); text-anchor: start;
+    }
+    .cost {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 20px; fill: var(--second); text-anchor: middle;
+    }
+    .cost-accent { fill: var(--accent); }
+    .note {
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 14px; fill: var(--second); text-anchor: middle;
+    }
+    .rule { stroke: var(--line); stroke-width: 1; }
+  </style>
+
+  <g class="d06">
+
+    <!-- Today: five steps, and most of them are somebody's afternoon -->
+    <text class="eyebrow" x="30" y="118">TODAY</text>
+
+    <rect class="box" x="30"  y="150" width="140" height="80" rx="12"/>
+    <text class="step" x="100" y="197">Question</text>
+
+    <path class="chev" d="M186 182 l14 8 -14 8"/>
+
+    <rect class="box" x="220" y="150" width="140" height="80" rx="12"/>
+    <text class="step" x="290" y="197">Reports</text>
+
+    <path class="chev" d="M376 182 l14 8 -14 8"/>
+
+    <rect class="box" x="410" y="150" width="140" height="80" rx="12"/>
+    <text class="step" x="480" y="189">Spread-</text>
+    <text class="step" x="480" y="209">sheets</text>
+
+    <path class="chev" d="M566 182 l14 8 -14 8"/>
+
+    <rect class="box" x="600" y="150" width="140" height="80" rx="12"/>
+    <text class="step" x="670" y="197">A meeting</text>
+
+    <path class="chev" d="M756 182 l14 8 -14 8"/>
+
+    <rect class="box" x="790" y="150" width="140" height="80" rx="12"/>
+    <text class="step" x="860" y="197">An answer</text>
+
+    <text class="cost" x="480" y="272">days, and it is out of date on arrival</text>
+
+    <line class="rule" x1="120" y1="304" x2="840" y2="304"/>
+
+    <!-- With FactSmith: the same question, two steps fewer than anyone expects -->
+    <text class="eyebrow" x="30" y="338">WITH FACTSMITH</text>
+
+    <rect class="box" x="160" y="350" width="140" height="80" rx="12"/>
+    <text class="step" x="230" y="397">Question</text>
+
+    <path class="chev" d="M316 382 l14 8 -14 8"/>
+
+    <rect class="box-ink" x="350" y="350" width="200" height="80" rx="12"/>
+    <text class="step step-on-dark" x="450" y="397">FactSmith</text>
+
+    <path class="chev chev-accent" d="M566 382 l14 8 -14 8"/>
+
+    <rect class="box-accent" x="600" y="350" width="200" height="80" rx="12"/>
+    <text class="step step-accent" x="700" y="389">A trusted</text>
+    <text class="step step-accent" x="700" y="411">answer</text>
+
+    <text class="cost cost-accent" x="480" y="472">minutes</text>
+
+    <text class="note" x="480" y="508">The question was never the expensive part.</text>
+
+  </g>
+</svg>

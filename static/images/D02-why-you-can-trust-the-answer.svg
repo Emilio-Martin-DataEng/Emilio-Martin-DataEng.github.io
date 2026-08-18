@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img"
+     aria-labelledby="d02-title d02-desc" width="960" height="540">
+  <title id="d02-title">Why you can trust the answer</title>
+  <desc id="d02-desc">Three stacked layers joined by thin vertical lines. Your business
+  sits at the top, the fact layer in the middle as the largest layer, and the trusted
+  answer at the bottom. Trust originates in the fact layer, not in the AI.</desc>
+
+  <!--
+    D02 - Why You Can Trust The Answer. Layer pattern.
+    Palette: canonical shipped Ask identity (Brand_Identity_Reconciliation, 2026-08-10).
+    Forbidden by spec and honoured here: arrows, chevrons, AI models as hero,
+    database diagrams. Connectors are thin vertical lines and nothing else - the
+    absence of arrows is the point. Layers rest on each other; nothing is being
+    pushed through a pipeline.
+  -->
+
+  <style>
+    .d02 {
+      --ink: var(--fs-text-primary, #0b0b0b);
+      --muted: var(--fs-text-muted, #898781);
+      --second: var(--fs-text-secondary, #52514e);
+      --line: var(--fs-grid, #e1e0d9);
+      --surface: var(--fs-surface, #fcfcfb);
+      --accent: var(--fs-accent, #f26f1e);
+      font-family: "Sora", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .layer { fill: none; stroke: var(--line); stroke-width: 1.5; }
+    .layer-dominant { fill: var(--ink); stroke: none; }
+    .layer-accent { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .label { font-size: 24px; font-weight: 600; fill: var(--ink); text-anchor: middle; }
+    .label-on-dark { fill: var(--surface); }
+    .label-accent { fill: var(--accent); }
+    .caption {
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 15px; fill: var(--second); text-anchor: middle;
+    }
+    .caption-on-dark { fill: var(--line); }
+    .connector { stroke: var(--muted); stroke-width: 1.5; }
+    .aside {
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 14px; fill: var(--muted); text-anchor: start;
+    }
+    .tick { stroke: var(--line); stroke-width: 1.5; }
+  </style>
+
+  <g class="d02">
+
+    <!-- 1. Your Business -->
+    <rect class="layer" x="230" y="46" width="500" height="104" rx="14"/>
+    <text class="label" x="480" y="90">Your Business</text>
+    <text class="caption" x="480" y="120">The systems where the numbers are recorded</text>
+
+    <line class="connector" x1="480" y1="150" x2="480" y2="206"/>
+
+    <!-- 2. Fact Layer - dominant. Trust originates here. -->
+    <rect class="layer-dominant" x="180" y="206" width="600" height="128" rx="16"/>
+    <text class="label label-on-dark" x="480" y="256">Fact Layer</text>
+    <text class="caption caption-on-dark" x="480" y="286">Business meaning, and who is allowed to see what</text>
+    <text class="caption caption-on-dark" x="480" y="310">Enforced here, beneath the AI. Never by it.</text>
+
+    <line class="connector" x1="480" y1="334" x2="480" y2="390"/>
+
+    <!-- 3. Trusted Answer - highlight -->
+    <rect class="layer-accent" x="230" y="390" width="500" height="104" rx="14"/>
+    <text class="label label-accent" x="480" y="434">Trusted Answer</text>
+    <text class="caption" x="480" y="464">Scoped to the person who asked</text>
+
+    <!-- Aside: what the AI is, and where it is not.
+         Deliberately small and to the side - the spec forbids AI as hero. -->
+    <line class="tick" x1="780" y1="270" x2="794" y2="270"/>
+    <text class="aside" x="800" y="264">The AI writes</text>
+    <text class="aside" x="800" y="284">the question.</text>
+    <text class="aside" x="800" y="310">It never decides</text>
+    <text class="aside" x="800" y="330">what you may see.</text>
+
+  </g>
+</svg>

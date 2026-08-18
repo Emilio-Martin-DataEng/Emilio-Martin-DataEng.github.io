@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img"
+     aria-labelledby="d01-title d01-desc" width="960" height="540">
+  <title id="d01-title">Where data becomes fact</title>
+  <desc id="d01-desc">A left-to-right transformation: raw data becomes business meaning,
+  business meaning becomes a fact, and a fact becomes a decision. Business meaning is
+  the largest stage; fact is highlighted as the moment value is created.</desc>
+
+  <!--
+    D01 - Where Data Becomes Fact. Transformation pattern.
+
+    Palette: canonical shipped Ask identity (Brand_Identity_Reconciliation, 2026-08-10).
+    Forge Ink navy is retired; ink is dominant, Ember is the accent and appears once,
+    on Fact - the moment value is created.
+
+    Inherits .factsmith CSS variables when inlined in the page; falls back standalone.
+    Forbidden by spec and honoured here: SmartArt, process arrows, technical
+    architecture, AI imagery. The connectors are minimal chevrons, not arrows.
+
+    Geometry: 30px margins, 900px of usable width.
+      box1  30..200   (170)
+      gap  200..240   chevron centred 220
+      box2 240..490   (250) dominant, taller
+      gap  490..530   chevron centred 510
+      box3 530..720   (190) accent
+      gap  720..760   chevron centred 740
+      box4 760..930   (170)
+  -->
+
+  <style>
+    .d01 {
+      --ink: var(--fs-text-primary, #0b0b0b);
+      --muted: var(--fs-text-muted, #898781);
+      --second: var(--fs-text-secondary, #52514e);
+      --line: var(--fs-grid, #e1e0d9);
+      --surface: var(--fs-surface, #fcfcfb);
+      --accent: var(--fs-accent, #f26f1e);
+      font-family: "Sora", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .stage { fill: none; stroke: var(--line); stroke-width: 1.5; }
+    .stage-dominant { fill: var(--ink); stroke: none; }
+    .stage-accent { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .label { font-size: 25px; font-weight: 600; fill: var(--ink); text-anchor: middle; }
+    .label-on-dark { fill: var(--surface); }
+    .label-accent { fill: var(--accent); }
+    .caption {
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 15px; fill: var(--second); text-anchor: middle;
+    }
+    .chevron { fill: none; stroke: var(--muted); stroke-width: 2;
+               stroke-linecap: round; stroke-linejoin: round; }
+    .chevron-accent { stroke: var(--accent); }
+  </style>
+
+  <g class="d01">
+
+    <!-- 1. Raw Data -->
+    <rect class="stage" x="30" y="196" width="170" height="148" rx="14"/>
+    <text class="label" x="115" y="278">Raw Data</text>
+    <text class="caption" x="115" y="388">What your systems</text>
+    <text class="caption" x="115" y="410">already record</text>
+
+    <path class="chevron" d="M212 258 l16 12 -16 12"/>
+
+    <!-- 2. Business Meaning - dominant element, per spec -->
+    <rect class="stage-dominant" x="240" y="174" width="250" height="192" rx="16"/>
+    <text class="label label-on-dark" x="365" y="262">Business</text>
+    <text class="label label-on-dark" x="365" y="294">Meaning</text>
+    <text class="caption" x="365" y="400">What your business means by</text>
+    <text class="caption" x="365" y="422">revenue, customer, on time</text>
+
+    <path class="chevron chevron-accent" d="M502 258 l16 12 -16 12"/>
+
+    <!-- 3. Fact - highlight element -->
+    <rect class="stage-accent" x="530" y="196" width="190" height="148" rx="14"/>
+    <text class="label label-accent" x="625" y="278">Fact</text>
+    <text class="caption" x="625" y="388">A number someone</text>
+    <text class="caption" x="625" y="410">has vouched for</text>
+
+    <path class="chevron" d="M732 258 l16 12 -16 12"/>
+
+    <!-- 4. Decision -->
+    <rect class="stage" x="760" y="196" width="170" height="148" rx="14"/>
+    <text class="label" x="845" y="278">Decision</text>
+    <text class="caption" x="845" y="388">What someone</text>
+    <text class="caption" x="845" y="410">does about it</text>
+
+  </g>
+</svg>
