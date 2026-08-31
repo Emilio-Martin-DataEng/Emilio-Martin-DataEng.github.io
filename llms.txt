@@ -1,0 +1,34 @@
+# FactSmith
+
+> FactSmith: voice-first BI for SMBs. A Fact Layer turns your data into governed facts and industry KPIs -- ask by voice, one flat cost, unlimited users.
+
+Ask is available now. Easy Data -- turning messy sources into a dimensional foundation -- is in early development; the two are halves of one job, not the same stage. The product reports on Kimball-style dimensional warehouses: the evaluation copy runs against PostgreSQL, and SQL Server is on the adapter path for a customer warehouse but not what the package proves end to end today. One company, one source database, one deployment -- not a shared cloud holding everybody else's numbers.
+
+Contact: factsmith@outlook.com
+
+## Product
+
+- [What is FactSmith](https://www.factsmith.co.za/what-is-factsmith/): what it is, who it is for, what you do with it
+- [How it works](https://www.factsmith.co.za/how-it-works/): connect, agree meaning, ask, keep
+- [Facts](https://www.factsmith.co.za/facts/): anyone can save an answer; only an administrator can vouch for one
+- [Trust and security](https://www.factsmith.co.za/trust-and-security/): permissions enforced beneath the AI
+- [Deployment](https://www.factsmith.co.za/deployment/): what standing up an evaluation copy involves
+- [FAQ](https://www.factsmith.co.za/faq/)
+
+## Sectors
+
+- [Distributors](https://www.factsmith.co.za/for-distributors/)
+- [Retail](https://www.factsmith.co.za/for-retail/)
+- [Manufacturing](https://www.factsmith.co.za/for-manufacturing/)
+- [Franchise](https://www.factsmith.co.za/for-franchise/)
+
+## Business questions
+
+- [Which customers are buying less?](https://www.factsmith.co.za/questions/identify-declining-customers/)
+- [Which stock is slow-moving?](https://www.factsmith.co.za/questions/find-slow-moving-inventory/)
+- [Where is margin leaking?](https://www.factsmith.co.za/questions/identify-margin-leakage/)
+- [Which stores are underperforming, and why?](https://www.factsmith.co.za/questions/identify-underperforming-stores/)
+- [How does store profitability compare across the network?](https://www.factsmith.co.za/questions/compare-store-profitability/)
+- [Is production keeping pace with demand?](https://www.factsmith.co.za/questions/compare-production-with-demand/)
+- [Which products are actually most profitable?](https://www.factsmith.co.za/questions/identify-most-profitable-products/)
+- [How does profitability compare across franchisees?](https://www.factsmith.co.za/questions/compare-franchisee-profitability/)
