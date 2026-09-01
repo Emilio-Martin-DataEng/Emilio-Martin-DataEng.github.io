@@ -6,29 +6,45 @@ Ask is available now. Easy Data -- turning messy sources into a dimensional foun
 
 Contact: factsmith@outlook.com
 
+Sitemap: https://www.factsmith.co.za/sitemap.xml
+
 ## Product
 
-- [What is FactSmith](https://www.factsmith.co.za/what-is-factsmith/): what it is, who it is for, what you do with it
-- [How it works](https://www.factsmith.co.za/how-it-works/): connect, agree meaning, ask, keep
-- [Facts](https://www.factsmith.co.za/facts/): some answers are a standard formula this warehouse can compute; an administrator still vouches for everything else
-- [Trust and security](https://www.factsmith.co.za/trust-and-security/): permissions enforced beneath the AI
+- [About](https://www.factsmith.co.za/about/)
+- [Contact](https://www.factsmith.co.za/contact/): how to reach us and what to say
 - [Deployment](https://www.factsmith.co.za/deployment/): what standing up an evaluation copy involves
+- [Facts](https://www.factsmith.co.za/facts/): some answers are a standard formula this warehouse can compute; an administrator still vouches for everything else
 - [FAQ](https://www.factsmith.co.za/faq/)
+- [Hosting costs](https://www.factsmith.co.za/hosting-costs/): you pay for the computer, not the seats
+- [How it works](https://www.factsmith.co.za/how-it-works/): connect, agree meaning, ask, keep
+- [Roadmap](https://www.factsmith.co.za/roadmap/)
+- [Trust and security](https://www.factsmith.co.za/trust-and-security/): permissions enforced beneath the AI
+- [Videos](https://www.factsmith.co.za/videos/): self-hosted minutes of the running product
+- [What is FactSmith?](https://www.factsmith.co.za/what-is-factsmith/): what it is, who it is for, what you do with it
+- [What's new](https://www.factsmith.co.za/whats-new/)
 
 ## Sectors
 
-- [Distributors](https://www.factsmith.co.za/for-distributors/)
-- [Retail](https://www.factsmith.co.za/for-retail/)
-- [Manufacturing](https://www.factsmith.co.za/for-manufacturing/)
-- [Franchise](https://www.factsmith.co.za/for-franchise/)
+- [For distributors](https://www.factsmith.co.za/for-distributors/)
+- [For franchise networks](https://www.factsmith.co.za/for-franchise/)
+- [For manufacturing](https://www.factsmith.co.za/for-manufacturing/)
+- [For multi-store retail](https://www.factsmith.co.za/for-retail/)
 
 ## Business questions
 
-- [Which customers are buying less?](https://www.factsmith.co.za/questions/distribution/identify-declining-customers/)
+- [Business questions](https://www.factsmith.co.za/questions/): the answer pages below, in one index
 - [Which stock is slow-moving?](https://www.factsmith.co.za/questions/distribution/find-slow-moving-inventory/)
+- [Which customers are buying less?](https://www.factsmith.co.za/questions/distribution/identify-declining-customers/)
 - [Where is margin leaking?](https://www.factsmith.co.za/questions/distribution/identify-margin-leakage/)
-- [Which stores are underperforming, and why?](https://www.factsmith.co.za/questions/retail/identify-underperforming-stores/)
-- [How does store profitability compare across the network?](https://www.factsmith.co.za/questions/retail/compare-store-profitability/)
+- [How does profitability compare across franchisees?](https://www.factsmith.co.za/questions/franchise/compare-franchisee-profitability/)
 - [Is production keeping pace with demand?](https://www.factsmith.co.za/questions/manufacturing/compare-production-with-demand/)
 - [Which products are actually most profitable?](https://www.factsmith.co.za/questions/manufacturing/identify-most-profitable-products/)
-- [How does profitability compare across franchisees?](https://www.factsmith.co.za/questions/franchise/compare-franchisee-profitability/)
+- [How does store profitability compare across the network?](https://www.factsmith.co.za/questions/retail/compare-store-profitability/)
+- [Which stores are underperforming, and why?](https://www.factsmith.co.za/questions/retail/identify-underperforming-stores/)
+
+## Insights
+
+- [Answers, not dashboards](https://www.factsmith.co.za/insight-answers-not-dashboards/)
+- [Permissions belong below the AI](https://www.factsmith.co.za/insight-permissions-below-the-ai/)
+- [Where data becomes fact](https://www.factsmith.co.za/insight-where-data-becomes-fact/)
+- [Insights](https://www.factsmith.co.za/insights/)

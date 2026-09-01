@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
+Disallow: /investors/
 Sitemap: https://www.factsmith.co.za/sitemap.xml
