@@ -10,7 +10,7 @@ Contact: factsmith@outlook.com
 
 - [What is FactSmith](https://www.factsmith.co.za/what-is-factsmith/): what it is, who it is for, what you do with it
 - [How it works](https://www.factsmith.co.za/how-it-works/): connect, agree meaning, ask, keep
-- [Facts](https://www.factsmith.co.za/facts/): anyone can save an answer; only an administrator can vouch for one
+- [Facts](https://www.factsmith.co.za/facts/): some answers are a standard formula this warehouse can compute; an administrator still vouches for everything else
 - [Trust and security](https://www.factsmith.co.za/trust-and-security/): permissions enforced beneath the AI
 - [Deployment](https://www.factsmith.co.za/deployment/): what standing up an evaluation copy involves
 - [FAQ](https://www.factsmith.co.za/faq/)
