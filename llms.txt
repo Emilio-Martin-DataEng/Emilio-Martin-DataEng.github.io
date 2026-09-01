@@ -24,11 +24,11 @@ Contact: factsmith@outlook.com
 
 ## Business questions
 
-- [Which customers are buying less?](https://www.factsmith.co.za/questions/identify-declining-customers/)
-- [Which stock is slow-moving?](https://www.factsmith.co.za/questions/find-slow-moving-inventory/)
-- [Where is margin leaking?](https://www.factsmith.co.za/questions/identify-margin-leakage/)
-- [Which stores are underperforming, and why?](https://www.factsmith.co.za/questions/identify-underperforming-stores/)
-- [How does store profitability compare across the network?](https://www.factsmith.co.za/questions/compare-store-profitability/)
-- [Is production keeping pace with demand?](https://www.factsmith.co.za/questions/compare-production-with-demand/)
-- [Which products are actually most profitable?](https://www.factsmith.co.za/questions/identify-most-profitable-products/)
-- [How does profitability compare across franchisees?](https://www.factsmith.co.za/questions/compare-franchisee-profitability/)
+- [Which customers are buying less?](https://www.factsmith.co.za/questions/distribution/identify-declining-customers/)
+- [Which stock is slow-moving?](https://www.factsmith.co.za/questions/distribution/find-slow-moving-inventory/)
+- [Where is margin leaking?](https://www.factsmith.co.za/questions/distribution/identify-margin-leakage/)
+- [Which stores are underperforming, and why?](https://www.factsmith.co.za/questions/retail/identify-underperforming-stores/)
+- [How does store profitability compare across the network?](https://www.factsmith.co.za/questions/retail/compare-store-profitability/)
+- [Is production keeping pace with demand?](https://www.factsmith.co.za/questions/manufacturing/compare-production-with-demand/)
+- [Which products are actually most profitable?](https://www.factsmith.co.za/questions/manufacturing/identify-most-profitable-products/)
+- [How does profitability compare across franchisees?](https://www.factsmith.co.za/questions/franchise/compare-franchisee-profitability/)
