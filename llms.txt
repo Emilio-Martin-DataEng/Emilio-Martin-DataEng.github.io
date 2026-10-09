@@ -17,6 +17,7 @@ Sitemap: https://www.factsmith.co.za/sitemap.xml
 - [FAQ](https://www.factsmith.co.za/faq/)
 - [Hosting costs](https://www.factsmith.co.za/hosting-costs/): you pay for the computer, not the seats
 - [How it works](https://www.factsmith.co.za/how-it-works/): connect, agree meaning, ask, keep
+- [Privacy](https://www.factsmith.co.za/privacy/)
 - [Roadmap](https://www.factsmith.co.za/roadmap/)
 - [Trust and security](https://www.factsmith.co.za/trust-and-security/): permissions enforced beneath the AI
 - [Videos](https://www.factsmith.co.za/videos/): self-hosted minutes of the running product
