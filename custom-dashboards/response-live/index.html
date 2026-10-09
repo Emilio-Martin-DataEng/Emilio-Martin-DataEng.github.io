@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Response Live | FactSmith example</title>
@@ -8,6 +9,8 @@
 <meta property="og:description" content="Response times by area against the 5-minute promise, live call-outs, and questions answered in plain English. Sample data, KwaZulu-Natal.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.factsmith.co.za/custom-dashboards/response-live/">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:image" content="https://www.factsmith.co.za/custom-dashboards/response-live/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://www.factsmith.co.za/custom-dashboards/response-live/">
@@ -144,6 +147,8 @@ footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
   .feed { max-height: 380px; }
 }
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <div class="brandbar">
@@ -563,4 +568,5 @@ WHERE  a.source = 'Panic app'
   render(); drawAsk();
 })();
 </script>
+</body>
 </html>

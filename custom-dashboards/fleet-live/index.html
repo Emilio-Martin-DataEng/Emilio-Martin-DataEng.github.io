@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fleet Live | FactSmith example</title>
@@ -8,6 +9,8 @@
 <meta property="og:description" content="Every truck on one map: pumping, driving, idle, alerts, tank levels and pump hours. Sample data.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.factsmith.co.za/custom-dashboards/fleet-live/">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:image" content="https://www.factsmith.co.za/custom-dashboards/fleet-live/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://www.factsmith.co.za/custom-dashboards/fleet-live/">
@@ -132,6 +135,8 @@ footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
   .pop { width: auto; left: 10px !important; right: 10px; top: auto !important; bottom: 10px; }
 }
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <div class="brandbar">
@@ -401,4 +406,5 @@ new MutationObserver(render).observe(document.documentElement, { attributes: tru
 render(); clock();
 setInterval(tick, 3000); setInterval(clock, 1000);
 </script>
+</body>
 </html>
