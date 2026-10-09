@@ -49,3 +49,9 @@ Sitemap: https://www.factsmith.co.za/sitemap.xml
 - [Permissions belong below the AI](https://www.factsmith.co.za/insight-permissions-below-the-ai/)
 - [Where data becomes fact](https://www.factsmith.co.za/insight-where-data-becomes-fact/)
 - [Insights](https://www.factsmith.co.za/insights/)
+
+## Example dashboards (sample data)
+
+- [Examples](https://www.factsmith.co.za/examples/): two working dashboards on invented data
+- [Response Live](https://www.factsmith.co.za/examples/response-live/): armed response times by area, live call-outs, plain-English questions
+- [Fleet Live](https://www.factsmith.co.za/examples/fleet-live/): vacuum-tanker fleet on one map: status, tank level, pump hours, fuel
