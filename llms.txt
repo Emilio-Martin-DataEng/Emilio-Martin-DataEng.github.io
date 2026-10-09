@@ -4,7 +4,7 @@
 
 Ask is available now. Easy Data -- turning messy sources into a dimensional foundation -- is in early development; the two are halves of one job, not the same stage. The product reports on Kimball-style dimensional warehouses: the evaluation copy runs against PostgreSQL, and SQL Server is on the adapter path for a customer warehouse but not what the package proves end to end today. One company, one source database, one deployment -- not a shared cloud holding everybody else's numbers.
 
-Contact: factsmith@outlook.com
+Contact: hello@factsmith.co.za
 
 Sitemap: https://www.factsmith.co.za/sitemap.xml
 
@@ -50,8 +50,8 @@ Sitemap: https://www.factsmith.co.za/sitemap.xml
 - [Where data becomes fact](https://www.factsmith.co.za/insight-where-data-becomes-fact/)
 - [Insights](https://www.factsmith.co.za/insights/)
 
-## Example dashboards (sample data)
+## Custom dashboards (examples on sample data)
 
-- [Examples](https://www.factsmith.co.za/examples/): two working dashboards on invented data
-- [Response Live](https://www.factsmith.co.za/examples/response-live/): armed response times by area, live call-outs, plain-English questions
-- [Fleet Live](https://www.factsmith.co.za/examples/fleet-live/): vacuum-tanker fleet on one map: status, tank level, pump hours, fuel
+- [Custom dashboards](https://www.factsmith.co.za/custom-dashboards/): bespoke dashboards FactSmith builds on a client's own data; two live examples
+- [Response Live](https://www.factsmith.co.za/custom-dashboards/response-live/): armed response times by area, live call-outs, plain-English questions
+- [Fleet Live](https://www.factsmith.co.za/custom-dashboards/fleet-live/): vacuum-tanker fleet on one map: status, tank level, pump hours, fuel

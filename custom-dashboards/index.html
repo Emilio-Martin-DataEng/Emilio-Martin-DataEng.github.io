@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Custom dashboards | FactSmith</title>
+<meta name="description" content="Bespoke dashboards FactSmith builds on your own data. Two live examples on sample data: an armed-response control room and a vacuum-tanker fleet.">
+<meta property="og:title" content="Custom dashboards by FactSmith">
+<meta property="og:description" content="Live example dashboards on sample data: armed response and tanker fleets.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.factsmith.co.za/custom-dashboards/">
+<meta property="og:image" content="https://www.factsmith.co.za/custom-dashboards/response-live/og.png">
+<link rel="canonical" href="https://www.factsmith.co.za/custom-dashboards/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: brand bar, short intro, two example cards (stack on phones). FactSmith canonical tokens. */
+:root { --bg: #F9F9F7; --panel: #FCFCFB; --ink: #0B0B0B; --muted: #5E6670; --line: #E1E1DC; --accent: #F26F1E; --accent-ink: #B4500F; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #111110; --panel: #1A1A18; --ink: #EDECE8; --muted: #9C9B94; --line: #2E2D2A; --accent: #FF8A3D; --accent-ink: #FF8A3D; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #111110; --panel: #1A1A18; --ink: #EDECE8; --muted: #9C9B94; --line: #2E2D2A; --accent: #FF8A3D; --accent-ink: #FF8A3D; color-scheme: dark }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Inter", system-ui, sans-serif; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 16px 16px 40px; display: grid; gap: 20px; }
+.brandbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; }
+.brand svg { width: 36px; height: 30px; }
+.brand span { font-family: "Sora", sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -.02em; }
+a { color: var(--ink); text-decoration-color: var(--accent); text-underline-offset: 3px; }
+a:hover { color: var(--accent-ink); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+h1 { font-family: "Sora", sans-serif; font-size: clamp(26px, 5vw, 36px); letter-spacing: -.015em; margin: 2px 0 4px; text-wrap: balance; }
+.kicker { margin: 8px 0 0; color: var(--accent-ink); font-weight: 600; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
+.lead { color: var(--muted); max-width: 62ch; margin: 0; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.card { grid-template-columns: minmax(0, 1fr); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; text-decoration: none; color: var(--ink); display: grid; }
+.card:hover { border-color: var(--accent); }
+.card img { width: 100%; height: auto; aspect-ratio: 1200 / 630; object-fit: cover; display: block; border-bottom: 1px solid var(--line); }
+.card div { padding: 14px 16px 16px; display: grid; gap: 4px; }
+.card h2 { font-family: "Sora", sans-serif; font-size: 19px; margin: 0; }
+.card p { margin: 0; color: var(--muted); font-size: 14px; }
+.foot { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+</style>
+<div class="wrap">
+  <div class="brandbar">
+    <a class="brand" href="https://www.factsmith.co.za" aria-label="FactSmith home"><svg viewBox="0 0 48 40" aria-hidden="true"><rect width="36" height="6" x="6" y="30" fill="var(--ink)" opacity="0.55" rx="3"/><path fill="#F26F1E" d="M24 4c1 10 1.8 10.8 14 14-12.2 3.2-13 4-14 14-1-10-1.8-10.8-14-14 12.2-3.2 13-4 14-14"/></svg><span>FactSmith</span></a>
+    <a href="/contact/">Talk to us about your data</a>
+  </div>
+  <header>
+    <p class="kicker">Custom dashboards</p>
+    <h1>Bespoke dashboards, built on your own data</h1>
+    <p class="lead">Beyond asking questions in plain English, FactSmith builds dashboards made for one business: your feeds, your map, your targets. Two working examples below. The companies and every number are invented, but each page is built the way FactSmith builds for a real client: operational feeds into one warehouse, one model, and answers people can act on.</p>
+  </header>
+  <div class="cards">
+    <a class="card" href="/custom-dashboards/response-live/">
+      <img src="response-live/og.png" alt="Response Live dashboard: map of KwaZulu-Natal areas coloured by response time, live call-outs and summary figures" width="1200" height="630">
+      <div><h2>Response Live</h2><p>Armed response. Response times by area against the 5-minute promise, live call-outs, worst hours, slow vehicles, and questions answered in plain English.</p></div>
+    </a>
+    <a class="card" href="/custom-dashboards/fleet-live/">
+      <img src="fleet-live/og.png" alt="Fleet Live dashboard: map of South Africa with tanker trucks by status and a fleet list" width="1200" height="630">
+      <div><h2>Fleet Live</h2><p>Vacuum tankers and industrial cleaning. Every truck on one map: pumping, driving, idle or in trouble, with tank level, pump hours and fuel.</p></div>
+    </a>
+  </div>
+  <p class="foot">Sample data only. <a href="https://www.factsmith.co.za">factsmith.co.za</a> · hello@factsmith.co.za</p>
+</div>
+</html>
