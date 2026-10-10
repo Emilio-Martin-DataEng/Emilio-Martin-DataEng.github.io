@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Custom dashboards | FactSmith</title>
-<meta name="description" content="Bespoke dashboards FactSmith builds on your own data. Two live examples on sample data: an armed-response control room and a vacuum-tanker fleet.">
+<meta name="description" content="Bespoke dashboards FactSmith builds on your own data. Three live examples on sample data: an armed-response control room, an interactive armed-response management dashboard, and a vacuum-tanker fleet.">
 <meta property="og:title" content="Custom dashboards by FactSmith">
 <meta property="og:description" content="Live example dashboards on sample data: armed response and tanker fleets.">
 <meta property="og:type" content="website">
@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap">
 <style>
-/* Layout: brand bar, short intro, two example cards (stack on phones). FactSmith canonical tokens. */
+/* Layout: brand bar, short intro, three example cards (stack on phones). FactSmith canonical tokens. */
 :root { --bg: #F9F9F7; --panel: #FCFCFB; --ink: #0B0B0B; --muted: #5E6670; --line: #E1E1DC; --accent: #F26F1E; --accent-ink: #B4500F; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #111110; --panel: #1A1A18; --ink: #EDECE8; --muted: #9C9B94; --line: #2E2D2A; --accent: #FF8A3D; --accent-ink: #FF8A3D; color-scheme: dark } }
 :root[data-theme="dark"] { --bg: #111110; --panel: #1A1A18; --ink: #EDECE8; --muted: #9C9B94; --line: #2E2D2A; --accent: #FF8A3D; --accent-ink: #FF8A3D; color-scheme: dark }
@@ -51,7 +51,7 @@ h1 { font-family: "Sora", sans-serif; font-size: clamp(26px, 5vw, 36px); letter-
   <header>
     <p class="kicker">Custom dashboards</p>
     <h1>Bespoke dashboards, built on your own data</h1>
-    <p class="lead">Beyond asking questions in plain English, FactSmith builds dashboards made for one business: your feeds, your map, your targets. Two working examples below. The companies and every number are invented, but each page is built the way FactSmith builds for a real client: operational feeds into one warehouse, one model, and answers people can act on.</p>
+    <p class="lead">Beyond asking questions in plain English, FactSmith builds dashboards made for one business: your feeds, your map, your targets. Three working examples below. The companies and every number are invented, but each page is built the way FactSmith builds for a real client: operational feeds into one warehouse, one model, and answers people can act on.</p>
   </header>
   <div class="cards">
     <a class="card" href="/custom-dashboards/response-live/">
@@ -61,6 +61,10 @@ h1 { font-family: "Sora", sans-serif; font-size: clamp(26px, 5vw, 36px); letter-
     <a class="card" href="/custom-dashboards/fleet-live/">
       <img src="fleet-live/og.png" alt="Fleet Live dashboard: map of South Africa with tanker trucks by status and a fleet list" width="1200" height="630">
       <div><h2>Fleet Live</h2><p>Vacuum tankers and industrial cleaning. Every truck on one map: pumping, driving, idle or in trouble, with tank level, pump hours and fuel.</p></div>
+    </a>
+    <a class="card" href="/custom-dashboards/armed-response/">
+      <img src="armed-response/og.png" alt="Armed Response Management dashboard: response KPIs, response by hour and town table with slicers" width="1200" height="630">
+      <div><h2>Armed Response Management</h2><p>A Claude Dashboard on a Kimball model. Slicers by period, town, alarm type and plan, three tabs for response, staffing and money, and drill-down from town to vehicle.</p></div>
     </a>
   </div>
   <p class="foot">Sample data only. <a href="https://www.factsmith.co.za">factsmith.co.za</a> · hello@factsmith.co.za</p>

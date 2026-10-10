@@ -1,8 +1,8 @@
 # FactSmith
 
-> FactSmith: voice-first BI for SMBs. A Fact Layer turns your data into governed facts and industry KPIs -- ask by voice, one flat cost, unlimited users.
+> FactSmith is a data architecture practice with its own product inside. It puts Claude and Copilot dashboards on business data that is modelled, agreed and proven, and designs the warehouses underneath.
 
-Ask is available now. Easy Data -- turning messy sources into a dimensional foundation -- is in early development; the two are halves of one job, not the same stage. The product reports on Kimball-style dimensional warehouses: the evaluation copy runs against PostgreSQL, and SQL Server is on the adapter path for a customer warehouse but not what the package proves end to end today. One company, one source database, one deployment -- not a shared cloud holding everybody else's numbers.
+Services: a fixed-price Claude Dashboards quick-start (one warehouse connected, starter dashboards, team trained, answers proven against the client's own golden questions), trusted numbers for Claude and Copilot (a governed layer of agreed business meaning under AI dashboards), and senior data architecture on contract. FactSmith Ask is the product inside: a governed answer layer over Kimball-style dimensional warehouses that runs on the client's own network; a gateway that serves its facts to Claude is in development.
 
 Contact: hello@factsmith.co.za
 
@@ -19,9 +19,13 @@ Sitemap: https://www.factsmith.co.za/sitemap.xml
 - [How it works](https://www.factsmith.co.za/how-it-works/): connect, agree meaning, ask, keep
 - [Privacy](https://www.factsmith.co.za/privacy/)
 - [Roadmap](https://www.factsmith.co.za/roadmap/)
+- [Services](https://www.factsmith.co.za/services/)
+- [Claude Dashboards quick-start](https://www.factsmith.co.za/services/claude-dashboards/)
+- [Data architect on contract](https://www.factsmith.co.za/services/data-architect/)
+- [Trusted numbers for Claude and Copilot](https://www.factsmith.co.za/services/trusted-numbers/)
 - [Trust and security](https://www.factsmith.co.za/trust-and-security/): permissions enforced beneath the AI
 - [Videos](https://www.factsmith.co.za/videos/): self-hosted minutes of the running product
-- [What is FactSmith?](https://www.factsmith.co.za/what-is-factsmith/): what it is, who it is for, what you do with it
+- [What is FactSmith Ask?](https://www.factsmith.co.za/what-is-factsmith/): what it is, who it is for, what you do with it
 - [What's new](https://www.factsmith.co.za/whats-new/)
 
 ## Sectors
@@ -45,13 +49,13 @@ Sitemap: https://www.factsmith.co.za/sitemap.xml
 
 ## Insights
 
-- [Answers, not dashboards](https://www.factsmith.co.za/insight-answers-not-dashboards/)
 - [Permissions belong below the AI](https://www.factsmith.co.za/insight-permissions-below-the-ai/)
 - [Where data becomes fact](https://www.factsmith.co.za/insight-where-data-becomes-fact/)
 - [Insights](https://www.factsmith.co.za/insights/)
 
 ## Custom dashboards (examples on sample data)
 
-- [Custom dashboards](https://www.factsmith.co.za/custom-dashboards/): bespoke dashboards FactSmith builds on a client's own data; two live examples
+- [Custom dashboards](https://www.factsmith.co.za/custom-dashboards/): bespoke dashboards FactSmith builds on a client's own data; three live examples
 - [Response Live](https://www.factsmith.co.za/custom-dashboards/response-live/): armed response times by area, live call-outs, plain-English questions
 - [Fleet Live](https://www.factsmith.co.za/custom-dashboards/fleet-live/): vacuum-tanker fleet on one map: status, tank level, pump hours, fuel
+- [Armed Response Management](https://www.factsmith.co.za/custom-dashboards/armed-response/): Claude Dashboard on a Kimball model: response, staffing and money tabs with slicers and drill-down
