@@ -59,3 +59,7 @@ Sitemap: https://www.factsmith.co.za/sitemap.xml
 - [Response Live](https://www.factsmith.co.za/custom-dashboards/response-live/): armed response times by area, live call-outs, plain-English questions
 - [Fleet Live](https://www.factsmith.co.za/custom-dashboards/fleet-live/): vacuum-tanker fleet on one map: status, tank level, pump hours, fuel
 - [Armed Response Management](https://www.factsmith.co.za/custom-dashboards/armed-response/): Claude Dashboard on a Kimball model: response, staffing and money tabs with slicers and drill-down
+
+## Articles
+
+- [I gave Claude Dashboards a 17-question exam](https://www.factsmith.co.za/insights/claude-dashboards-golden-questions/): golden-question acceptance test of Claude Dashboards on Opus, Sonnet and Haiku

@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Dashboards review: a 17-question test | FactSmith</title>
+<meta name="description" content="A data architect's hands-on test of Claude Dashboards: 17 locked-answer questions, three models, how it works underneath, and where your data goes.">
+<meta property="og:title" content="I gave Claude Dashboards a 17-question exam. The cheapest model lost three call-outs.">
+<meta property="og:description" content="17 questions with answers locked in advance, three Claude models, and one lesson about definitions I didn't expect. Plus what Claude Dashboards really is under the hood, what it's like to use, and where your data goes.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.factsmith.co.za/insights/claude-dashboards-golden-questions/">
+<meta property="og:image" content="https://www.factsmith.co.za/insights/claude-dashboards-golden-questions/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="article:published_time" content="2026-10-10">
+<meta property="article:author" content="Emilio Martin">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://www.factsmith.co.za/insights/claude-dashboards-golden-questions/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: brand bar, article column (68ch), full-width figures inside it. FactSmith canonical tokens, same as /custom-dashboards/. */
+:root { --bg: #F9F9F7; --panel: #FCFCFB; --ink: #0B0B0B; --muted: #5E6670; --line: #E1E1DC; --accent: #F26F1E; --accent-ink: #B4500F; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #111110; --panel: #1A1A18; --ink: #EDECE8; --muted: #9C9B94; --line: #2E2D2A; --accent: #FF8A3D; --accent-ink: #FF8A3D; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #111110; --panel: #1A1A18; --ink: #EDECE8; --muted: #9C9B94; --line: #2E2D2A; --accent: #FF8A3D; --accent-ink: #FF8A3D; color-scheme: dark }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.65 "Inter", system-ui, sans-serif; }
+.wrap { max-width: 760px; margin: 0 auto; padding: 16px 16px 48px; }
+.brandbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding-bottom: 10px; border-bottom: 1px solid var(--line); font-size: 15px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; }
+.brand svg { width: 36px; height: 30px; }
+.brand span { font-family: "Sora", sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -.02em; }
+a { color: var(--ink); text-decoration-color: var(--accent); text-underline-offset: 3px; }
+a:hover { color: var(--accent-ink); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.kicker { margin: 28px 0 0; color: var(--accent-ink); font-weight: 600; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
+h1 { font-family: "Sora", sans-serif; font-size: clamp(28px, 5vw, 40px); line-height: 1.15; letter-spacing: -.015em; margin: 6px 0 10px; text-wrap: balance; }
+.standfirst { font-size: 19px; line-height: 1.55; color: var(--muted); margin: 0 0 12px; }
+.byline { color: var(--muted); font-size: 14px; margin: 0 0 24px; }
+h2 { font-family: "Sora", sans-serif; font-size: 23px; letter-spacing: -.01em; margin: 40px 0 8px; }
+h3 { font-family: "Sora", sans-serif; font-size: 18px; margin: 28px 0 6px; }
+p, ul, ol { margin: 0 0 16px; }
+li { margin-bottom: 8px; }
+figure { margin: 24px 0; }
+figure img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 10px; }
+figcaption { color: var(--muted); font-size: 14px; margin-top: 8px; }
+.tbl { overflow-x: auto; margin: 0 0 20px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; }
+.note { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 8px; padding: 14px 16px; margin: 20px 0; }
+.note p:last-child { margin: 0; }
+.cta { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; margin-top: 32px; }
+.foot { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; margin-top: 32px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brandbar">
+    <a class="brand" href="https://www.factsmith.co.za" aria-label="FactSmith home"><svg viewBox="0 0 48 40" aria-hidden="true"><rect width="36" height="6" x="6" y="30" fill="var(--ink)" opacity="0.55" rx="3"/><path fill="#F26F1E" d="M24 4c1 10 1.8 10.8 14 14-12.2 3.2-13 4-14 14-1-10-1.8-10.8-14-14 12.2-3.2 13-4 14-14"/></svg><span>FactSmith</span></a>
+    <a href="/contact/">Talk to us about your data</a>
+  </div>
+
+  <article>
+    <p class="kicker">Insights</p>
+    <h1>I gave Claude Dashboards a 17-question exam. The cheapest model lost three call-outs.</h1>
+    <p class="standfirst">17 questions with answers locked in advance, three Claude models, and one lesson about definitions I didn't expect. Plus what Claude Dashboards really is under the hood, what it's like to use day to day, and where your data goes when Claude reads it.</p>
+    <p class="byline">Emilio Martin, data architect and founder of FactSmith · 10 October 2026</p>
+
+    <p>On 8 October Anthropic launched Claude Dashboards, in beta. You ask a question in plain language. Claude writes SQL against your warehouse and gives you a live dashboard.</p>
+    <p>I am a data architect. I have spent over 20 years building warehouses, and I have a simple rule for accepting one: before handover, we agree a list of golden questions with known answers. Then we check the warehouse gets them right. That rule has saved me from more awkward steering committees than I care to count.</p>
+    <p>So I did the same to Claude Dashboards. I wrote 17 questions, fixed the answers in advance, and kept the answers away from Claude. Think of it as an exam where the examiner has already marked the memo.</p>
+    <p>The idea is not new, and I won't pretend it is. Databricks builds it into Genie as benchmarks, and AI teams call it an eval set. What I wanted was the business version: answers fixed before the model sees the question, plain English an owner would use, and traps from real reporting.</p>
+    <p>The short version: it did very well. The more useful result is where it did not, and why.</p>
+
+    <h2>The setup</h2>
+    <p>I built an invented business: an armed-response company in KwaZulu-Natal. The data is invented sample data, generated for this test. The town names are real places. The figures are not. No real burglars were harmed.</p>
+    <p>The data sits in a star schema in BigQuery. It has six dimensions (town, vehicle, alarm type, client, date and time of day) and four business processes: call-outs, billing, shifts and vehicle tracking.</p>
+    <p>I put the same business in two places, and you can open both. One is a Claude-generated HTML demo, which I'll call the artifact: <a href="/custom-dashboards/response-live/">Response Live</a>. The other is Claude Dashboards, running live SQL on BigQuery. A copy of that one runs in your browser as <a href="/custom-dashboards/armed-response/">Armed Response Management</a>, with every slicer, tab and drill-down working.</p>
+
+    <figure>
+      <a href="/custom-dashboards/armed-response/"><img src="01-headline.jpg" alt="Armed Response Management dashboard, last 30 days: 2,385 call-outs, 3:52 average response, 86.1% inside 5 minutes, slowest town KwaDukuza at 4:49" width="1600" height="475"></a>
+      <figcaption>The headline numbers, which match the golden answers: 2,385 call-outs, 3:52 average, 86.1% inside 5 minutes, KwaDukuza slowest. <a href="/custom-dashboards/armed-response/">Open the dashboard</a> and set it to the last 30 days.</figcaption>
+    </figure>
+
+    <h2>How I set it up</h2>
+    <p>Nothing exotic. Anyone on a paid Claude plan can repeat this in an afternoon.</p>
+    <ul>
+      <li><strong>Warehouse:</strong> a Google BigQuery sandbox. It is free, needs no billing account, and deletes tables after 60 days, which is either a feature or a trap depending on how organised you are.</li>
+      <li><strong>Data:</strong> a small script generated the invented company and loaded the star schema. The call-outs come from the same generator as the <a href="/custom-dashboards/response-live/">Response Live</a> demo, with the clock frozen, so the two show the same numbers.</li>
+      <li><strong>Connection:</strong> the official Google Cloud BigQuery connector in Claude, made by Google. You sign in with your Google account once, and Claude can then list tables and run read-only queries as you.</li>
+      <li><strong>Claude:</strong> a Pro account. For each model a brand-new chat with memory off, research off and no project, so nothing from an earlier run could leak in.</li>
+      <li><strong>Prompts:</strong> three, pasted word for word into every run. No definitions, no corrections. If a model asked a question, the rule was to reply "Your call, state the assumption." None of them asked.</li>
+    </ul>
+    <p>The first prompt, trimmed, read like this:</p>
+    <div class="note"><p>"I run an armed-response security company. Our data is in BigQuery, project [&hellip;], dataset [&hellip;]. Build me a control-room dashboard for the last 30 days: how many call-outs we had, our average response time, how often we got there inside 5 minutes, which town is slowest, response by town, and an hour-by-town view of when we miss 5 minutes. I want to be able to look at night only (22:00 to 06:00) too."</p></div>
+    <p>The second asked the four questions from the demo. The third asked eight questions across billing, shifts and tracking, and ended with "Add whatever of this belongs on the dashboard."</p>
+
+    <h2>What is under the hood</h2>
+    <p>Strip away the launch video and Claude Dashboards is three things you may already know, put together well.</p>
+    <ol>
+      <li><strong>An artifact.</strong> Anthropic's own help page says it plainly: "A dashboard is an artifact made from the Dashboards template." It is the same family as Claude's Docs, Slides and Design: a web page Claude writes and keeps in your Artifacts tab.</li>
+      <li><strong>A connector.</strong> Claude reaches your data through a connector: Redshift, BigQuery, ClickHouse, Databricks or Snowflake, or apps such as Salesforce. Claude's connectors are built on the Model Context Protocol, the open standard Anthropic published in 2024 for plugging tools into models.</li>
+      <li><strong>An agent writing SQL.</strong> Claude explores your tables first, runs test queries, then writes one SQL query per chart and bakes it into the page. When anyone opens the dashboard, each chart runs its query live and shows when it was last refreshed. Click a chart and you see its SQL.</li>
+    </ol>
+    <p>Three consequences follow, and they matter more than the charts.</p>
+    <ul>
+      <li><strong>Viewers bring their own keys.</strong> Queries run with the viewer's access, not the author's. That is good security and the reason you can't put a live dashboard on a public link. It is also why the <a href="/custom-dashboards/armed-response/">copy on our site</a> runs on a small dataset in your browser.</li>
+      <li><strong>There is no semantic layer.</strong> Every chart carries its own SQL. Nothing makes two dashboards agree on what "revenue" means. Claude was honest about this. On one headline card it wrote: "The SQL is this dashboard's own, not a governed metric." Hold that thought for the Haiku section.</li>
+      <li><strong>You pay twice, lightly.</strong> Building uses your Claude plan's allowance. Every refresh runs real queries, so the warehouse bills its compute separately. On a sandbox that is zero. On a busy Snowflake account, keep an eye on it.</li>
+    </ul>
+    <p>Think of it as a very fast analyst who writes a fresh query for every chart and leaves the SQL on your desk to check. Brilliant, as long as somebody checks.</p>
+
+    <h2>The test</h2>
+    <p>The 17 checks came in three groups:</p>
+    <ul>
+      <li>5 headline numbers: call-outs, average response, share inside 5 minutes, slowest town, and the night-only view.</li>
+      <li>4 control-room questions, such as the worst hour and the slowest vehicle.</li>
+      <li>8 cross-process questions, built with deliberate traps.</li>
+    </ul>
+    <p>The traps were the sort that catch people in real reporting. Summing every invoice triples revenue, because three months of invoices sit in the table. Sales love that number. Auditors less so. Joining facts row to row fans the totals out. A night shift runs 18:00 to 06:00, but night call-outs run 22:00 to 05:59, and the two are easy to confuse.</p>
+    <p>I ran three models: Opus 5.5, Sonnet 5.5 and Haiku 5.5. I gave no definitions and no hints. The prompts were plain business English, the way an owner would ask on a Monday morning before coffee.</p>
+
+    <h2>Results</h2>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>Opus 5.5</th><th>Sonnet 5.5</th><th>Haiku 5.5</th></tr></thead>
+      <tbody>
+        <tr><td>Score (of 17)</td><td>17</td><td>17</td><td>11 right, 4 defensible, 2 wrong</td></tr>
+        <tr><td>Minutes: dashboard / four questions / cross-business</td><td>10.5 / about 3 / about 13</td><td>6.5 / 1.5 / 11</td><td>5 / 2.5 / up to 10</td></tr>
+      </tbody>
+    </table></div>
+    <p>Opus and Sonnet got all 17, including the traps. Both used one invoice run, not three, so revenue per call-out came out at R 1,179. Both aggregated each process to town, client or vehicle before joining. Neither mixed up night shifts and night call-outs.</p>
+
+    <figure>
+      <a href="/custom-dashboards/armed-response/"><img src="02-town-and-hour.jpg" alt="Response by town table and response by hour of day chart, with night hours shaded" width="1600" height="658"></a>
+      <figcaption>Response by town and by hour. Click any town in the <a href="/custom-dashboards/armed-response/">live dashboard</a> to drill down to its vehicles.</figcaption>
+    </figure>
+
+    <p>What impressed me was not the arithmetic. It was the judgement.</p>
+    <ul>
+      <li>Both models flagged that tracking going offline looked linked to every miss, and said the link was too clean to take at face value. Sonnet pointed out that 0.4% of call-outs missed when the tracker was offline 15 minutes or less, against 47% beyond that. It told me to check how the field is recorded before acting.</li>
+      <li>Both caught a flaw in my own generator. Three vehicles with no night shifts on the roster still attended 76 night call-outs. A tired analyst misses that. So did I, and I wrote the generator. Both said the data could not explain it and suggested asking operations.</li>
+      <li>Sonnet noticed that fuel was derived from distance, not metered. Every vehicle came out at exactly 9.1 km per litre. Either I run the most disciplined fleet in Africa, or the number was made up. It was made up, by me. Sonnet said plainly that this data cannot show fuel waste or theft.</li>
+      <li>Both said overtime and slow response move together, and that this shows association, not cause. On shifts with no overtime, 2.4% of call-outs missed 5 minutes. On the longest overtime, 55.7% did.</li>
+    </ul>
+
+    <figure>
+      <a href="/custom-dashboards/armed-response/"><img src="03-tracking-and-misses.jpg" alt="Scatter of tracking downtime against misses by vehicle, and bar chart of misses by tracking downtime on the day: 0% under 10 minutes, 38.3% for 10 to 29 minutes, 46.3% for 30 minutes or more" width="1600" height="542"></a>
+      <figcaption>The tracking cliff, on the Staffing &amp; cover tab. The dashboard's own caption says it: "a pattern worth investigating, not proof of cause."</figcaption>
+    </figure>
+
+    <p>I should also mention a first attempt. In my first Opus run I left out the Google Cloud project ID. Claude asked for it, tried a few guesses that all failed, searched my other connected sources, and then refused to build a dashboard on made-up numbers. I would rather have that than a confident page of invented figures. I have sat through board packs that showed less restraint.</p>
+
+    <h2>Haiku: mostly right, but read this part</h2>
+    <p>Haiku was quick and mostly right. It also taught me the best lesson in the test.</p>
+    <p>Its dashboard said 2,382 call-outs. Its own chat text, a few lines earlier, said 2,385. The golden answer is 2,385. Other figures were off by a few as well: 96 call-outs at midnight against 99, and 53 panic-app activations against 55.</p>
+
+    <figure>
+      <img src="og.png" alt="Haiku in the chat said 2,385 call-outs; Haiku on its own dashboard said 2,382. Same model, same data, two answers." width="1200" height="630">
+    </figure>
+
+    <p>I checked in BigQuery. The queries were not wrong. Haiku had quietly used a rolling window: "30 days before right now", anchored at 01:07, when it ran. The data covers 30 calendar days. So the window cut off a few hours of the oldest day.</p>
+    <p>Two things follow. The definition was never stated. And the number on that dashboard shrinks every hour it stays open, because "now" keeps moving. It is the only dashboard I have seen that loses business while you watch it.</p>
+    <p>That is the sharpest point I can make about definitions. Nothing here was an SQL error. Two reasonable people can read "last 30 days" two ways, and they will get two different numbers on the same data. This is the missing semantic layer from the section above, caught in the act.</p>
+    <p>The second miss was the overtime question. Haiku said overtime affected response "modestly", comparing above-median and below-median days: 237 seconds against 228. It missed the real effect, which shows up by shift: 2.4% of call-outs missed with no overtime, 55.7% with the heaviest overtime. The day-level comparison averaged the cliff away. Its tracking answer had the same shape: right direction, but a weak split that hid the cliff.</p>
+    <p>Haiku's tone was as confident as the other two. If you did not have the answers, you could not tell. Confidence comes standard on every model. Depth is the upgrade. That is fine, as long as you know it and you check.</p>
+
+    <h2>What it is like to use</h2>
+    <p>Accuracy is one thing. Whether a busy owner would actually use it is another. So after the scored runs I asked Opus for the dashboard an owner would really want: filters, tabs and drill-down. That build is the <a href="/custom-dashboards/armed-response/">Armed Response Management</a> sample on our site.</p>
+
+    <h3>Watching it build</h3>
+    <p>You type, and Claude goes to work in the chat. A progress list ticks over as it lists tables, reads columns and tests queries. It ends with a line like "Created a file, used Google Cloud BigQuery, and 12 more steps". The first control-room dashboard took Opus about ten minutes. The full interactive one took 20 to 25. That is slower than a chart wizard and much faster than a ticket to the BI team.</p>
+    <p>The best part is the end. Claude lists its assumptions in plain English: "today" means the latest day in the data, revenue is monthly fees spread over the days of the month, "inside 5 minutes" means 300 seconds or less, and so on. If you only read one thing Claude writes, read that list. It is where the definitions live.</p>
+
+    <h3>Using the dashboard</h3>
+    <ul>
+      <li><strong>Slicers that behave.</strong> Today, last 7 days and last 30 days. Town, alarm type, client plan and a night-only switch. Active filters show as chips you can remove one by one, with "Clear all filters" for the impatient. I ran nine slicer tests against the golden answers, and all nine passed.</li>
+      <li><strong>Tabs that follow the filters.</strong> Response, Staffing &amp; cover, and Money &amp; clients. Pick a town and the night switch, and the shift and money figures follow. Where a filter doesn't apply, a note on the card says so. That is a nicer touch than most dashboards I have been paid to fix.</li>
+      <li><strong>Drill-down.</strong> Click a town and you get its vehicles. Click a column heading and it sorts. KW-02, the slowest vehicle in the golden answers, was right where it should be.</li>
+      <li><strong>Design on request.</strong> I gave Claude three screenshots of our own demo and asked for the same look. It matched the fonts, colours, tiles and layout closely, and every number matched too.</li>
+    </ul>
+
+    <h3>What was rough</h3>
+    <ul>
+      <li><strong>No Dashboards button on Pro.</strong> It is a normal chat with a BigQuery connector, and the dashboard arrives as an artifact in a half-width side panel. Open the artifact on its own page to see it properly.</li>
+      <li><strong>Permission prompts.</strong> In the scored runs Claude asked me to approve each table lookup. A dashboard across four processes means a lot of clicking. My index finger has lodged a formal complaint.</li>
+      <li><strong>Connector grants.</strong> One build stalled until I signed in to BigQuery again, and every dashboard stayed blank until I clicked through an "Artifact uses connectors" dialog.</li>
+      <li><strong>Frozen tabs.</strong> The browser tab froze while heavy dashboards rendered, in every run and once for over ten minutes. The fix: open the artifact URL in a fresh tab, where it loaded fine. Until then I drank a lot of coffee.</li>
+      <li><strong>Claude never looked at its own page.</strong> It said so honestly: "I have not seen the page rendered, so the layout is unchecked." One table was clipped on the right. It checks its numbers better than its layout. So do most analysts.</li>
+      <li><strong>Small surprises.</strong> I asked for 30 days and the interactive version opened on 7. The night-only switch looks like a button, not a toggle. And I had to put the project ID in the prompt, because without it Claude could not find the data.</li>
+      <li><strong>Sharing.</strong> Anyone you share with needs read access to the warehouse tables, because the queries run as them. Plan for that before you send the link to the board.</li>
+    </ul>
+    <p>None of this is a deal-breaker for a beta. All of it matters when you roll it out to a team.</p>
+
+    <h2>The artifact against Dashboards</h2>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th><a href="/custom-dashboards/response-live/">Claude-generated artifact</a></th><th><a href="/custom-dashboards/armed-response/">Claude Dashboards</a></th></tr></thead>
+      <tbody>
+        <tr><td>Data</td><td>Generated in the page, a fixed sample</td><td>Live SQL on BigQuery</td></tr>
+        <tr><td>Refresh</td><td>Never, it only simulates a live feed</td><td>Per chart, with the time shown</td></tr>
+        <tr><td>SQL</td><td>Illustrative, for four questions</td><td>Real SQL per chart, which you can inspect</td></tr>
+        <tr><td>Scope</td><td>Call-outs only</td><td>Across billing, shifts and tracking</td></tr>
+        <tr><td>Who can view</td><td>Anyone with the link</td><td>Needs access to the warehouse</td></tr>
+      </tbody>
+    </table></div>
+    <p>The artifact is excellent for a demo or a story. It is simulated, though, and it cannot answer a question about your real business. Dashboards is real, but it needs a warehouse underneath it.</p>
+
+    <figure>
+      <a href="/custom-dashboards/armed-response/"><img src="04-money-per-callout.jpg" alt="Money and clients tab: revenue R 2,784,837, revenue per call-out R 1,168, staff and fuel cost per call-out R 1,036, margin per call-out by town" width="1600" height="896"></a>
+      <figcaption>The Money &amp; clients tab. Spot the difference: the public copy spreads monthly fees over the days of the month, so it shows R 1,168 per call-out, not the R 1,179 golden answer from one invoice run. Same data, different definition. Which is rather the point of this whole article.</figcaption>
+    </figure>
+
+    <h2>Claude Motion</h2>
+    <p>Anthropic launched Claude Motion on the same day. It turns reports and charts into short animated videos. I planned to turn these findings into a 60-second explainer. On my Pro account Motion simply is not there: there is no entry in the menus and no upgrade prompt. Launch coverage says it is for Team and Enterprise plans. The script is written. It is waiting by the phone.</p>
+
+    <h2>Your data and Claude</h2>
+    <p>I used invented data on a personal Pro account, so I had nothing to lose. Your business is different. The question is less "who owns the data" and more "where does it travel".</p>
+    <p>Your tables stay in your warehouse. But what Claude reads to build the dashboard leaves it: table and column names, the sample rows it looks at while exploring, and every query result. Those pass through Anthropic, sit in the chat, and end up in the dashboard page. Your SQL travels too. Every viewer can click a chart and read the logic behind it, which is great for trust and less great if that logic is your secret sauce.</p>
+    <ul>
+      <li><strong>The plan sets the rules.</strong> On business plans (Team, Enterprise and the API) Anthropic's commercial terms say it does not train on your content, and that you own the outputs. Personal plans (Free, Pro, Max) work differently. Since 2025 you choose whether your chats help train Claude, with a "Help improve Claude" setting, and feedback you give with the thumbs buttons can be used even if you opt out. Company numbers belong on a business plan. If someone insists on Pro, switch training off and keep their thumbs to themselves.</li>
+      <li><strong>Your warehouse permissions are the real lock.</strong> Each viewer's queries run with their own access. So give Claude, and everyone else, a read-only login that sees a set of approved views, not the raw tables. Leave out or mask names, phone numbers and ID numbers. Claude can't leak a column it was never allowed to see.</li>
+      <li><strong>Owning the output is not owning the idea.</strong> You own what Claude produces, to the extent the law allows. AI-generated work may not be protectable at all, and a competitor can ask for the same chart. Your real asset is the model and the agreed definitions underneath, not the chart.</li>
+      <li><strong>Mind the borders.</strong> In South Africa, POPIA says personal information sent offshore, and Anthropic is in the US, needs a lawful basis. Usually that is a contract or the customer's consent. If you build dashboards for clients, put a data-handling clause in the engagement letter. Regulated businesses should also check the fine print: Anthropic's help pages say artifacts aren't offered under some compliance setups, such as zero data retention.</li>
+      <li><strong>Every hop adds a contract.</strong> The BigQuery connector is made by Google. Exporting to Hex, Sigma or Grafana adds those companies' terms as well. Know which ones you have signed up to.</li>
+    </ul>
+    <p>None of this is a reason to stay away. It is a reason to set it up properly once: business plan, governed read-only views, personal data masked, definitions written down, and someone looking at the warehouse query log now and then. Usual disclaimer: I am a data architect, not your lawyer. Check Anthropic's current terms before you rely on any of this.</p>
+
+    <h2>What this means for a business</h2>
+    <p>I went into this test looking for where Claude breaks. On a well-modelled warehouse with clear names, the stronger models did not break at all. I had the same result on an earlier test: 20 out of 20 golden questions on raw sample tables, in about nine minutes.</p>
+    <p>So the gap is not Claude. It is three things around it.</p>
+    <ol>
+      <li><strong>Getting the data into a warehouse.</strong> Most small and mid-sized businesses have none. Their numbers live in an accounting package, an ERP and a handful of spreadsheets.</li>
+      <li><strong>Agreeing definitions.</strong> "Last 30 days", "revenue", "active customer", "on time". If two people ask the same question and get different answers, the dashboard is no use to either.</li>
+      <li><strong>Proof.</strong> A dashboard is only useful once you know it's right. Write down 20 questions with answers fixed from your books, run them, and keep the scorecard. Run them again every month.</li>
+    </ol>
+    <p>That is what I would want before I trusted any dashboard with a decision, whether a person or a model built it.</p>
+
+    <div class="cta">
+      <p>If you want Claude Dashboards on your own business data, proven right, that is what FactSmith does. See the <a href="/services/claude-dashboards/">Claude Dashboards quick-start</a>, browse <a href="/custom-dashboards/">all our sample dashboards</a> (including <a href="/custom-dashboards/fleet-live/">Fleet Live</a> for tanker fleets), or <a href="/contact/">talk to us about your data</a>.</p>
+    </div>
+  </article>
+
+  <p class="foot">All companies and figures in this article and the linked dashboards are invented sample data. <a href="/insights/">More insights</a> · <a href="https://www.factsmith.co.za">factsmith.co.za</a> · hello@factsmith.co.za</p>
+</div>
+</body>
+</html>
