@@ -212,7 +212,7 @@ th { font-weight: 600; }
     <h2>Claude Motion</h2>
     <p>Anthropic launched Claude Motion on the same day. It turns reports and charts into short animated videos. I planned to turn these findings into a 60-second explainer. On my Pro account Motion simply is not there: there is no entry in the menus and no upgrade prompt. Launch coverage says it is for Team and Enterprise plans. The script is written. It is waiting by the phone.</p>
 
-    <h2>Your data and Claude</h2>
+    <h2 id="your-data">Your data and Claude</h2>
     <p>I used invented data on a personal Pro account, so I had nothing to lose. Your business is different. The question is less "who owns the data" and more "where does it travel".</p>
     <p>Your tables stay in your warehouse. But what Claude reads to build the dashboard leaves it: table and column names, the sample rows it looks at while exploring, and every query result. Those pass through Anthropic, sit in the chat, and end up in the dashboard page. Your SQL travels too. Every viewer can click a chart and read the logic behind it, which is great for trust and less great if that logic is your secret sauce.</p>
     <ul>
@@ -222,7 +222,7 @@ th { font-weight: 600; }
       <li><strong>Mind the borders.</strong> In South Africa, POPIA says personal information sent offshore, and Anthropic is in the US, needs a lawful basis. Usually that is a contract or the customer's consent. If you build dashboards for clients, put a data-handling clause in the engagement letter. Regulated businesses should also check the fine print: Anthropic's help pages say its newest artifact features aren't yet available to organisations on zero data retention, customer-managed encryption keys or HIPAA setups.</li>
       <li><strong>Every hop adds a contract.</strong> The BigQuery connector is made by Google. Exporting to Hex, Sigma or Grafana adds those companies' terms as well. Know which ones you have signed up to.</li>
     </ul>
-    <p>None of this is a reason to stay away. It is a reason to set it up properly once: business plan, governed read-only views, personal data masked, definitions written down, and someone looking at the warehouse query log now and then. Usual disclaimer: I am a data architect, not your lawyer. This reflects Anthropic's <a href="https://www.anthropic.com/legal/commercial-terms">commercial terms</a> and <a href="https://www.anthropic.com/legal/consumer-terms">consumer terms</a> as of October 2026. Check the current versions before you rely on any of this.</p>
+    <p>None of this is a reason to stay away. It is a reason to set it up properly once: business plan, governed read-only views, personal data masked, definitions written down, and someone looking at the warehouse query log now and then. (That set-up is part of our <a href="/services/claude-dashboards/#your-data">Claude Dashboards quick-start</a>.) Usual disclaimer: I am a data architect, not your lawyer. This reflects Anthropic's <a href="https://www.anthropic.com/legal/commercial-terms">commercial terms</a> and <a href="https://www.anthropic.com/legal/consumer-terms">consumer terms</a> as of October 2026. Check the current versions before you rely on any of this.</p>
 
     <h2>What this means for a business</h2>
     <p>I went into this test looking for where Claude breaks. On a well-modelled warehouse with clear names, the stronger models did not break at all. I had the same result on an earlier test: 20 out of 20 golden questions on raw sample tables, in about nine minutes.</p>
