@@ -1,8 +1,8 @@
 # FactSmith
 
-> FactSmith is a data architecture practice with its own product inside. It puts Claude and Copilot dashboards on business data that is modelled, agreed and proven, and designs the warehouses underneath.
+> FactSmith is a data architecture practice with its own product inside. It puts Claude dashboards on business data that is modelled, agreed and proven, and designs the warehouses underneath.
 
-Services: a fixed-price Claude Dashboards quick-start (one warehouse connected, starter dashboards, team trained, answers proven against the client's own golden questions), trusted numbers for Claude and Copilot (a governed layer of agreed business meaning under AI dashboards), and senior data architecture on contract. FactSmith Ask is the product inside: a governed answer layer over Kimball-style dimensional warehouses that runs on the client's own network; a gateway that serves its facts to Claude is in development.
+Services: a fixed-price Claude Dashboards quick-start (one warehouse connected, starter dashboards, team trained, answers proven against the client's own golden questions), trusted numbers for Claude (a governed layer of agreed business meaning under AI dashboards), and senior data architecture on contract. FactSmith Ask is the product inside: a governed answer layer over Kimball-style dimensional warehouses that runs on the client's own network; a gateway that serves its facts to Claude is in development.
 
 Contact: hello@factsmith.co.za
 
@@ -22,7 +22,7 @@ Sitemap: https://www.factsmith.co.za/sitemap.xml
 - [Services](https://www.factsmith.co.za/services/)
 - [Claude Dashboards quick-start](https://www.factsmith.co.za/services/claude-dashboards/)
 - [Data architect on contract](https://www.factsmith.co.za/services/data-architect/)
-- [Trusted numbers for Claude and Copilot](https://www.factsmith.co.za/services/trusted-numbers/)
+- [Trusted numbers for Claude](https://www.factsmith.co.za/services/trusted-numbers/)
 - [Trust and security](https://www.factsmith.co.za/trust-and-security/): permissions enforced beneath the AI
 - [Videos](https://www.factsmith.co.za/videos/): self-hosted minutes of the running product
 - [What is FactSmith Ask?](https://www.factsmith.co.za/what-is-factsmith/): what it is, who it is for, what you do with it
