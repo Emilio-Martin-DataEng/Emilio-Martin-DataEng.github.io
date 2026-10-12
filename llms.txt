@@ -55,10 +55,12 @@ Sitemap: https://www.factsmith.co.za/sitemap.xml
 
 ## Custom dashboards (examples on sample data)
 
-- [Custom dashboards](https://www.factsmith.co.za/custom-dashboards/): bespoke dashboards FactSmith builds on a client's own data; three live examples
+- [Custom dashboards](https://www.factsmith.co.za/custom-dashboards/): bespoke dashboards FactSmith builds on a client's own data; five live examples
 - [Response Live](https://www.factsmith.co.za/custom-dashboards/response-live/): armed response times by area, live call-outs, plain-English questions
 - [Fleet Live](https://www.factsmith.co.za/custom-dashboards/fleet-live/): vacuum-tanker fleet on one map: status, tank level, pump hours, fuel
 - [Armed Response Management](https://www.factsmith.co.za/custom-dashboards/armed-response/): Claude Dashboard on a Kimball model: response, staffing and money tabs with slicers and drill-down
+- [Xero dashboards](https://www.factsmith.co.za/custom-dashboards/xero/): what Claude's Xero connector shows today (receivables, payables, profit, cash) and nine illustrative dashboards the full Xero API can feed
+- [Xero warehouse dashboard](https://www.factsmith.co.za/custom-dashboards/xero-warehouse/): interactive Xero warehouse sample: P&L bridge, margin, receivables, cash, payroll, projects; slicers by period, region, customer, item
 
 ## Articles
 

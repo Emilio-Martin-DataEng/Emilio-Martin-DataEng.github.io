@@ -1,0 +1,266 @@
+<!doctype html>
+<!--
+Sources for the Xero API family list and endpoints (checked 12 October 2026):
+- https://github.com/XeroAPI/Xero-OpenAPI (Xero's official OpenAPI descriptions; one spec per family: Accounting, Identity, Bank Feeds, Assets, Projects, Payroll AU/NZ/UK, Files, Finance, Webhooks, App Store)
+- https://raw.githubusercontent.com/XeroAPI/Xero-OpenAPI/master/xero_accounting.yaml (Budgets, Items, Payments, BankTransactions, Journals, ManualJournals, TrackingCategories, Reports/BudgetSummary and ProfitAndLoss)
+- https://raw.githubusercontent.com/XeroAPI/Xero-OpenAPI/master/xero-payroll-uk.yaml (PayRuns, Payslips, Employees)
+- https://raw.githubusercontent.com/XeroAPI/Xero-OpenAPI/master/xero-projects.yaml (Projects, Tasks, Time)
+- https://raw.githubusercontent.com/XeroAPI/Xero-OpenAPI/master/xero_assets.yaml (Assets, AssetTypes)
+- https://raw.githubusercontent.com/XeroAPI/Xero-OpenAPI/master/xero-finance.yaml (described as endpoints for loan applications)
+- https://raw.githubusercontent.com/XeroAPI/Xero-OpenAPI/master/xero_bankfeeds.yaml (closed API for financial institutions)
+- https://raw.githubusercontent.com/XeroAPI/Xero-OpenAPI/master/xero-app-store.yaml (App Store billing for partners)
+- https://developer.xero.com/pricing (tiers; Journals and the XPM API are Advanced tier premium features)
+- https://developer.xero.com/documentation/ (the developer portal renders client-side, so it was not machine-readable; the OpenAPI repository above is the source of record)
+Practice Manager is confirmed only from the pricing page, not from a spec.
+All figures marked Illustrative are invented and reconcile to the real September totals from Xero's Demo Company (UK).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xero dashboards: Claude connector today, full Xero API next | FactSmith</title>
+<meta name="description" content="What Claude's Xero connector shows today, and the extra dashboards a warehouse on the full Xero API can add. Real figures from Xero's demo company, illustrative panels clearly tagged.">
+<link rel="canonical" href="https://www.factsmith.co.za/custom-dashboards/xero/">
+<meta property="og:title" content="Xero dashboards: what Claude sees today, and what your full Xero data can show">
+<meta property="og:description" content="Receivables, payables and profit from Xero's demo company, plus nine illustrative dashboards the full Xero API can feed.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.factsmith.co.za/custom-dashboards/xero/">
+<meta property="og:image" content="https://www.factsmith.co.za/custom-dashboards/xero/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Static preview of the Claude Dashboard built on the Xero connector, plus illustrative full-API panels. FactSmith canonical tokens. */
+:root { --bg: #F9F9F7; --panel: #FCFCFB; --ink: #0B0B0B; --muted: #5E6670; --line: #E1E1DC; --accent: #F26F1E; --accent-ink: #B4500F; --bar: #8A8F98; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #111110; --panel: #1A1A18; --ink: #EDECE8; --muted: #9C9B94; --line: #2E2D2A; --accent: #FF8A3D; --accent-ink: #FF8A3D; --bar: #6B6F77; color-scheme: dark } }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Inter", system-ui, sans-serif; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 16px 16px 40px; display: grid; gap: 20px; }
+.wrap > * { min-width: 0; }
+.brandbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; }
+.brand svg { width: 36px; height: 30px; }
+.brand span { font-family: "Sora", sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -.02em; }
+a { color: var(--ink); text-decoration-color: var(--accent); text-underline-offset: 3px; }
+a:hover { color: var(--accent-ink); }
+h1 { font-family: "Sora", sans-serif; font-size: clamp(26px, 5vw, 36px); letter-spacing: -.015em; margin: 2px 0 4px; text-wrap: balance; }
+h2 { font-family: "Sora", sans-serif; font-size: clamp(21px, 3.6vw, 26px); letter-spacing: -.01em; margin: 14px 0 0; text-wrap: balance; }
+h3 { font-family: "Sora", sans-serif; font-size: 18px; margin: 0; }
+h4 { font-family: "Sora", sans-serif; font-size: 15px; margin: 18px 0 8px; }
+.kicker { margin: 8px 0 0; color: var(--accent-ink); font-weight: 600; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
+.lead { color: var(--muted); max-width: 66ch; margin: 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr)); gap: 16px; }
+.grid > * { min-width: 0; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.ph { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 6px 10px; margin-bottom: 12px; }
+.api { margin: -4px 0 10px; color: var(--muted); font-size: 13px; }
+.sub { color: var(--muted); font-size: 13px; margin-bottom: 4px; }
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.tile .n { font-family: "Sora", sans-serif; font-size: clamp(22px, 4vw, 28px); font-weight: 700; letter-spacing: -.02em; }
+.tile .n.over { color: var(--accent-ink); }
+.tile .l { color: var(--muted); font-size: 13px; }
+.row { display: grid; grid-template-columns: minmax(0, 11em) 1fr auto; gap: 10px; align-items: center; padding: 5px 0; font-size: 14px; }
+.row .t { height: 10px; background: var(--line); border-radius: 5px; overflow: hidden; }
+.row .t i { display: block; height: 100%; background: var(--accent); }
+.row .t i.ok { background: var(--bar); }
+.row b { min-width: 5.5em; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.row span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar { display: block; height: 10px; min-width: 56px; background: var(--line); border-radius: 5px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); }
+.note { color: var(--muted); font-size: 13px; margin: 10px 0 0; }
+.scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 500; font-size: 13px; }
+td.r, th.r { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
+.tag.ill { border-color: var(--accent); color: var(--accent-ink); }
+.tag.blk { border-style: dashed; }
+.foot { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+@media (max-width: 640px) {
+  .scroll th, .scroll td { padding: 6px 4px; font-size: 13px; }
+  .panel { padding: 12px; }
+  .wide table, .wide thead, .wide tbody, .wide tr, .wide td { display: block; }
+  .wide thead { position: absolute; left: -9999px; }
+  .wide tr { padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .wide td { border: 0; padding: 2px 0; }
+  .wide td:first-child { font-weight: 600; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brandbar">
+    <a class="brand" href="https://www.factsmith.co.za" aria-label="FactSmith home"><svg viewBox="0 0 48 40" aria-hidden="true"><rect width="36" height="6" x="6" y="30" fill="var(--ink)" opacity="0.55" rx="3"/><path fill="#F26F1E" d="M24 4c1 10 1.8 10.8 14 14-12.2 3.2-13 4-14 14-1-10-1.8-10.8-14-14 12.2-3.2 13-4 14-14"/></svg><span>FactSmith</span></a>
+    <a href="/contact/">Talk to us about your Xero data</a>
+  </div>
+
+  <header>
+    <p class="kicker">Claude Dashboards on Xero</p>
+    <h1>Xero dashboards: what Claude sees today, and what your full Xero data can show.</h1>
+    <p class="lead">Part one is a static copy of a live Claude Dashboard on the official Xero connector, as it stood on 10 October 2026 on Xero's Demo Company (UK), with real figures. Part two shows the extra dashboards that become possible when your Xero data is copied into a warehouse through the full Xero API. Those panels use invented figures, each tagged <span class="tag ill">Illustrative</span>, and they add up to the real totals.</p>
+  </header>
+
+  <h2>1. Claude's Xero connector, today</h2>
+  <div class="grid">
+    <section class="panel" aria-labelledby="rec">
+      <div class="ph"><h3 id="rec">Owed to us</h3><span class="tag">From Xero Demo Company (UK), 10 Oct 2026</span></div>
+      <div class="tiles">
+        <div class="tile"><div class="n">£20,441.38</div><div class="l">14 invoices, 8 customers</div></div>
+        <div class="tile"><div class="n over">£9,223.08</div><div class="l">overdue (45.1%)</div></div>
+      </div>
+      <div class="l sub">Overdue by customer</div>
+      <div class="row"><span>Ridgeway University</span><span class="t"><i style="width:100.0%"></i></span><b data-k="overdue-bar">6,187.50</b></div>
+      <div class="row"><span>Port &amp; Philip Freight</span><span class="t"><i style="width:36.3%"></i></span><b data-k="overdue-bar">2,245.00</b></div>
+      <div class="row"><span>City Limousines</span><span class="t"><i style="width:8.4%"></i></span><b data-k="overdue-bar">519.95</b></div>
+      <div class="row"><span>DIISR</span><span class="t"><i style="width:4.4%"></i></span><b data-k="overdue-bar">270.63</b></div>
+      <p class="note">The four rows sum to the £9,223.08 overdue. The other £11,218.30 is not yet due.</p>
+    </section>
+    <section class="panel" aria-labelledby="pay">
+      <div class="ph"><h3 id="pay">We owe</h3><span class="tag">From Xero Demo Company (UK), 10 Oct 2026</span></div>
+      <div class="tiles">
+        <div class="tile"><div class="n">£9,079.59</div><div class="l">16 bills, 13 suppliers</div></div>
+        <div class="tile"><div class="n over">£6,098.48</div><div class="l">overdue (67.2%)</div></div>
+      </div>
+      <div class="l sub">Largest balances</div>
+      <div class="row"><span>SMART Agency</span><span class="t"><i style="width:100%"></i></span><b>4,500.00</b></div>
+      <div class="row"><span>ABC Furniture</span><span class="t"><i class="ok" style="width:26.7%"></i></span><b>1,200.00</b></div>
+      <p class="note">SMART Agency is fully overdue. ABC Furniture is not yet due. Bills only; expense claims (£69.80) are excluded.</p>
+    </section>
+    <section class="panel" aria-labelledby="pl">
+      <div class="ph"><h3 id="pl">Profit and loss, September 2026</h3><span class="tag">From Xero Demo Company (UK), 10 Oct 2026</span></div>
+<table><thead><tr><th>September 2026</th><th class="r">£</th></tr></thead><tbody><tr><td>Sales</td><td class="r" data-k="pl-sales">17,072.72</td></tr><tr><td>Other revenue</td><td class="r" data-k="pl-other">624.99</td></tr><tr><td><b>Total income</b></td><td class="r" data-k="pl-income"><b>17,697.71</b></td></tr><tr><td>Cost of sales (Purchases)</td><td class="r" data-k="pl-cos">1,250.00</td></tr><tr><td><b>Gross profit</b></td><td class="r" data-k="pl-gp"><b>16,447.71</b></td></tr><tr><td>Advertising &amp; Marketing</td><td class="r" data-k="pl-am">7,044.79</td></tr><tr><td>Other overheads (derived)</td><td class="r" data-k="pl-oth">2,650.47</td></tr><tr><td><b>Net profit</b></td><td class="r" data-k="pl-net"><b>6,752.45</b></td></tr></tbody></table>
+      <p class="note">Taken from Xero's own Profit and Loss report, excluding VAT. Overheads of £9,695.26 are gross profit less net profit; Advertising &amp; Marketing is the biggest line.</p>
+    </section>
+    <section class="panel" aria-labelledby="cash">
+      <div class="ph"><h3 id="cash">Cash and top customer</h3><span class="tag">From Xero Demo Company (UK), 10 Oct 2026</span></div>
+      <div class="tiles">
+        <div class="tile"><div class="n" data-k="cash-tile">£5,274.30</div><div class="l">Business Bank Account, book balance</div></div>
+        <div class="tile"><div class="n">£10,312.50</div><div class="l">Ridgeway University, top customer in September</div></div>
+      </div>
+      <p class="note">Cash is as at 10 October 2026, from the Balance Sheet. Bank West (£624.99) is other revenue, not a customer. The bank statement balance can differ because of unreconciled lines.</p>
+    </section>
+  </div>
+  <p class="note" style="margin:-8px 0 0">Xero blocks the profit and loss, balance sheet, cash and top-customer tools on demo companies. The two panels above that cover profit and cash therefore show figures read from Xero's own reports. On a real organisation the connector is built to return them live.</p>
+
+  <section class="panel" aria-labelledby="tie">
+    <h3 id="tie">Every figure ties to Xero</h3>
+<div class="scroll"><table><thead><tr><th>Figure</th><th class="r">Dashboard</th><th class="r">Xero report</th><th>Match</th></tr></thead><tbody><tr><td>Owed to us</td><td class="r">20,441.38</td><td class="r">20,441.38</td><td><span class="tag">Aged Receivables</span></td></tr><tr><td>Of which overdue</td><td class="r">9,223.08</td><td class="r">9,223.08</td><td><span class="tag">Aged Receivables</span></td></tr><tr><td>We owe</td><td class="r">9,079.59</td><td class="r">9,079.59</td><td><span class="tag">Aged Payables</span></td></tr><tr><td>Of which overdue</td><td class="r">6,098.48</td><td class="r">6,098.48</td><td><span class="tag">Aged Payables</span></td></tr></tbody></table></div>
+    <p class="note">Overdue is measured against due dates as at 10 October 2026. One customer invoice of £1,995.00 falls due that same day, so £7,228.08 is overdue strictly before today.</p>
+  </section>
+
+  <section class="panel" aria-labelledby="how">
+    <h3 id="how" style="margin-bottom:12px">How the connector dashboard works</h3>
+    <p class="lead" style="margin:0 0 8px">Two read-only Xero calls, <em>Get aged receivables</em> and <em>Get aged payables</em>, run on each open. Totals and the overdue split are computed on the page from the invoice and bill rows, and a Sources panel shows those rows beside Xero's own totals.</p>
+    <p class="lead" style="margin:0">Each viewer reads through their own Xero connection, which suits an owner and their accountant.</p>
+  </section>
+
+  <section class="panel" aria-labelledby="conn">
+    <h3 id="conn">What the connector can do: 20 read-only tools</h3>
+    <p class="note" style="margin-top:0">Tested one by one on the Demo Company (UK) on 10 October 2026. Xero blocks four of the report tools on demo companies, so the profit and cash panels above show figures from Xero's own reports. On a real organisation those four tools are built to return live figures; we have tested them on the demo company only.</p>
+    <h4>Report widgets (7)</h4>
+    <div class="wide">
+<table><thead><tr><th>Tool</th><th>On the demo company</th><th>What it answers</th><th>Limits</th></tr></thead><tbody><tr><td>Get Profit and Loss</td><td><span class="tag blk">Blocked on a demo company</span></td><td>Profit and loss for a period.</td><td>Xero refuses demo companies: "We can't show data for a demo company".</td></tr><tr><td>Get Financial Position</td><td><span class="tag blk">Blocked on a demo company</span></td><td>Balance sheet position.</td><td>Same demo-company block.</td></tr><tr><td>Get Cash Position</td><td><span class="tag blk">Blocked on a demo company</span></td><td>Bank balances.</td><td>Balances only, no transactions.</td></tr><tr><td>Get Top Customers by Revenue</td><td><span class="tag blk">Blocked on a demo company</span></td><td>Best customers by income.</td><td>Same demo-company block.</td></tr><tr><td>Get Aged Receivables</td><td><span class="tag">Works</span></td><td>Who owes you, by age and by customer.</td><td>Matched Xero's report exactly.</td></tr><tr><td>Get Aged Payables</td><td><span class="tag">Works</span></td><td>Who you owe, by age and by supplier.</td><td>Matched Xero's report exactly.</td></tr><tr><td>Show Invoices Summary</td><td><span class="tag">Works</span></td><td>Invoiced, paid and outstanding for a period.</td><td>Lists the top 5 customers only. Its widget hung the browser tab once.</td></tr></tbody></table>
+    </div>
+    <h4>Data tools (13)</h4>
+    <div class="wide">
+<table><thead><tr><th>Tool</th><th>On the demo company</th><th>What it answers</th><th>Limits</th></tr></thead><tbody><tr><td>Get Invoices</td><td><span class="tag">Works</span></td><td>Sales invoices, with optional line items.</td><td>Sales documents only.</td></tr><tr><td>Get Bills</td><td><span class="tag">Works</span></td><td>Supplier bills, with optional line items.</td><td>Bills only; credit notes and payments are not reachable.</td></tr><tr><td>Get Chart of Accounts</td><td><span class="tag">Works</span></td><td>90 accounts: code, name, type, class, tax type.</td><td>Active accounts only, and no balances.</td></tr><tr><td>Get Organisation Info</td><td><span class="tag">Works</span></td><td>Base currency and region.</td><td></td></tr><tr><td>Get Organisation Financial Year</td><td><span class="tag">Works</span></td><td>Year start (1 April) and end (31 March).</td><td>No lock dates.</td></tr><tr><td>Get Connected Organisations</td><td><span class="tag">Works</span></td><td>Which organisations are linked.</td><td></td></tr><tr><td>Get Tracking Categories</td><td><span class="tag">Works</span></td><td>Category and option names (Region, 4 options).</td><td>Active only; names and IDs, not figures.</td></tr><tr><td>Get Purchase Orders</td><td><span class="tag">Works</span></td><td>PO number, status, contact, totals.</td><td>No line items; drafts excluded.</td></tr><tr><td>Get Repeating Invoices</td><td><span class="tag">Works</span></td><td>Recurring sales templates.</td><td>Empty in the demo company.</td></tr><tr><td>Get Repeating Bills</td><td><span class="tag">Works</span></td><td>Recurring bill templates, schedule and lines.</td><td>Always returns lines.</td></tr><tr><td>Get Bank Account Transactions</td><td><span class="tag">Works</span></td><td>Date, amount, contact, account, reference.</td><td>Unreconciled lines only.</td></tr><tr><td>Get Contacts</td><td><span class="tag">Works</span></td><td>Contact ID, name and email.</td><td>Lookup by name or ID only; it cannot list contacts.</td></tr><tr><td>Get 1099 Report Summary</td><td><span class="tag blk">Blocked (no permission)</span></td><td>US 1099 form.</td><td>Not relevant to a UK organisation.</td></tr></tbody></table>
+    </div>
+    <p class="note"><b>Not reachable through the connector at all:</b> manual journals, the general ledger (journal lines, trial balance), payments, credit notes, items and inventory, budgets, payroll and expense claims, quotes, projects, fixed assets and depreciation, reconciled bank lines and transfers, and full contact details.</p>
+  </section>
+
+  <h2>2. The full Xero API, through a FactSmith warehouse</h2>
+  <p class="lead">Everything below needs data the connector cannot reach. Every number on these panels is invented unless the note says it is real, and each panel names the Xero API endpoint behind it.</p>
+  <p class="lead"><a href="/custom-dashboards/xero-warehouse/"><strong>Open the full interactive warehouse dashboard</strong></a>, with slicers by period, region, customer and item.</p>
+  <div class="grid">
+    <section class="panel" aria-labelledby="trend">
+      <div class="ph"><h3 id="trend">Monthly profit and loss, April to September</h3><span class="tag ill">Illustrative</span></div>
+      <p class="api">Needs: Reports endpoint, Profit and Loss by month (Accounting API).</p>
+<div class="scroll"><table><thead><tr><th>Month</th><th class="r">Income</th><th class="r">Net profit</th><th class="r">Margin</th><th>Income</th></tr></thead><tbody><tr><td>Apr</td><td class="r" data-k="trend-income-apr">14,820.00</td><td class="r" data-k="trend-net-apr">4,910.30</td><td class="r">33.1%</td><td><span class="bar"><i class="" style="width:83.7%"></i></span></td></tr><tr><td>May</td><td class="r" data-k="trend-income-may">15,360.50</td><td class="r" data-k="trend-net-may">5,402.15</td><td class="r">35.2%</td><td><span class="bar"><i class="" style="width:86.8%"></i></span></td></tr><tr><td>Jun</td><td class="r" data-k="trend-income-jun">16,105.25</td><td class="r" data-k="trend-net-jun">5,988.70</td><td class="r">37.2%</td><td><span class="bar"><i class="" style="width:91.0%"></i></span></td></tr><tr><td>Jul</td><td class="r" data-k="trend-income-jul">15,890.80</td><td class="r" data-k="trend-net-jul">5,615.40</td><td class="r">35.3%</td><td><span class="bar"><i class="" style="width:89.8%"></i></span></td></tr><tr><td>Aug</td><td class="r" data-k="trend-income-aug">16,742.10</td><td class="r" data-k="trend-net-aug">6,310.55</td><td class="r">37.7%</td><td><span class="bar"><i class="" style="width:94.6%"></i></span></td></tr><tr><td>Sep</td><td class="r" data-k="trend-income-sep">17,697.71</td><td class="r" data-k="trend-net-sep">6,752.45</td><td class="r">38.2%</td><td><span class="bar"><i class="" style="width:100.0%"></i></span></td></tr></tbody></table></div>
+      <p class="note">September is the real figure (£17,697.71 income, £6,752.45 net profit). April to August are invented. The connector gives one period at a time; a warehouse keeps every month side by side.</p>
+    </section>
+    <section class="panel" aria-labelledby="bud">
+      <div class="ph"><h3 id="bud">Budget against actual, September 2026</h3><span class="tag ill">Illustrative</span></div>
+      <p class="api">Needs: Budgets endpoint and the Budget Summary report (Accounting API).</p>
+<div class="scroll"><table><thead><tr><th>September</th><th class="r">Budget</th><th class="r">Actual</th><th class="r">Variance</th><th>Result</th></tr></thead><tbody><tr><td>Income</td><td class="r" data-k="bud-b-inc">16,500.00</td><td class="r" data-k="bud-a-inc">17,697.71</td><td class="r">+1,197.71</td><td>Ahead</td></tr><tr><td>Cost of sales</td><td class="r" data-k="bud-b-cos">1,400.00</td><td class="r" data-k="bud-a-cos">1,250.00</td><td class="r">-150.00</td><td>Under budget</td></tr><tr><td>Overheads</td><td class="r" data-k="bud-b-ovh">9,200.00</td><td class="r" data-k="bud-a-ovh">9,695.26</td><td class="r">+495.26</td><td>Over budget</td></tr><tr><td><b>Net profit</b></td><td class="r" data-k="bud-b-net"><b>5,900.00</b></td><td class="r" data-k="bud-a-net"><b>6,752.45</b></td><td class="r"><b>+852.45</b></td><td><b>Ahead</b></td></tr></tbody></table></div>
+      <p class="note">Actuals are the real September figures. Budgets are invented, with the Demo Company's overheads of £9,695.26 as the actual. The connector cannot read budgets at all.</p>
+    </section>
+    <section class="panel" aria-labelledby="items">
+      <div class="ph"><h3 id="items">Margin by product, September 2026</h3><span class="tag ill">Illustrative</span></div>
+      <p class="api">Needs: invoice lines plus the Items endpoint (Accounting API).</p>
+<div class="scroll"><table><thead><tr><th>Item</th><th class="r">Sales</th><th class="r">Cost</th><th class="r">Margin</th></tr></thead><tbody><tr><td>Consulting (hourly)</td><td class="r" data-k="item-rev-0">7,420.00</td><td class="r" data-k="item-cost-0">0.00</td><td class="r">100.0%</td></tr><tr><td>Design package</td><td class="r" data-k="item-rev-1">4,850.72</td><td class="r" data-k="item-cost-1">0.00</td><td class="r">100.0%</td></tr><tr><td>Support retainer</td><td class="r" data-k="item-rev-2">3,200.00</td><td class="r" data-k="item-cost-2">0.00</td><td class="r">100.0%</td></tr><tr><td>Hardware and supplies</td><td class="r" data-k="item-rev-3">1,602.00</td><td class="r" data-k="item-cost-3">1,250.00</td><td class="r">22.0%</td></tr><tr><td><b>Total</b></td><td class="r" data-k="item-rev-total"><b>17,072.72</b></td><td class="r" data-k="item-cost-total"><b>1,250.00</b></td><td class="r"><b>92.7%</b></td></tr></tbody></table></div>
+      <p class="note">The item split is invented. Sales add to the real £17,072.72 and cost to the real £1,250.00 of Purchases. Adding Other Revenue of £624.99 gives the real gross profit of £16,447.71. Services carry no item cost in this sample.</p>
+    </section>
+    <section class="panel" aria-labelledby="dtp">
+      <div class="ph"><h3 id="dtp">Days to pay by customer</h3><span class="tag ill">Illustrative</span></div>
+      <p class="api">Needs: Payments plus Invoices (Accounting API).</p>
+      <div class="l sub">Average days from invoice date to payment, against 30-day terms</div>
+      <div class="row"><span>Ridgeway University</span><span class="t"><i class="" style="width:100.0%"></i></span><b>46 days</b></div>
+      <div class="row"><span>Port &amp; Philip Freight</span><span class="t"><i class="" style="width:84.8%"></i></span><b>39 days</b></div>
+      <div class="row"><span>City Limousines</span><span class="t"><i class="ok" style="width:47.8%"></i></span><b>22 days</b></div>
+      <div class="row"><span>DIISR</span><span class="t"><i class="ok" style="width:37.0%"></i></span><b>17 days</b></div>
+      <p class="note">Days are invented, though the order matches who is overdue today. The connector sees what is owed now; only payments show how long customers really take.</p>
+    </section>
+    <section class="panel" aria-labelledby="cf">
+      <div class="ph"><h3 id="cf">Cash flow, money in against money out</h3><span class="tag ill">Illustrative</span></div>
+      <p class="api">Needs: BankTransactions plus Payments (Accounting API).</p>
+<div class="scroll"><table><thead><tr><th>Month</th><th class="r">In</th><th class="r">Out</th><th class="r">Net</th><th class="r">Closing</th></tr></thead><tbody><tr><td>Opening, 1 Apr</td><td class="r"></td><td class="r"></td><td class="r"></td><td class="r" data-k="cf-open">3,894.40</td></tr><tr><td>Apr</td><td class="r" data-k="cf-in-0">15,210.40</td><td class="r" data-k="cf-out-0">14,880.15</td><td class="r">+330.25</td><td class="r" data-k="cf-close-0">4,224.65</td></tr><tr><td>May</td><td class="r" data-k="cf-in-1">15,820.00</td><td class="r" data-k="cf-out-1">15,946.30</td><td class="r">-126.30</td><td class="r" data-k="cf-close-1">4,098.35</td></tr><tr><td>Jun</td><td class="r" data-k="cf-in-2">16,350.75</td><td class="r" data-k="cf-out-2">15,702.10</td><td class="r">+648.65</td><td class="r" data-k="cf-close-2">4,747.00</td></tr><tr><td>Jul</td><td class="r" data-k="cf-in-3">16,040.20</td><td class="r" data-k="cf-out-3">16,255.85</td><td class="r">-215.65</td><td class="r" data-k="cf-close-3">4,531.35</td></tr><tr><td>Aug</td><td class="r" data-k="cf-in-4">16,910.60</td><td class="r" data-k="cf-out-4">16,432.40</td><td class="r">+478.20</td><td class="r" data-k="cf-close-4">5,009.55</td></tr><tr><td>Sep</td><td class="r" data-k="cf-in-5">17,355.30</td><td class="r" data-k="cf-out-5">17,090.55</td><td class="r">+264.75</td><td class="r" data-k="cf-close-5">5,274.30</td></tr></tbody></table></div>
+      <p class="note">The September closing balance is the real £5,274.30 as at 10 October; every earlier month is invented. Cash includes VAT and timing, so it differs from profit and loss income. The connector shows today's balance and unreconciled lines only.</p>
+    </section>
+    <section class="panel" aria-labelledby="reg">
+      <div class="ph"><h3 id="reg">Net profit by region, September 2026</h3><span class="tag ill">Illustrative</span></div>
+      <p class="api">Needs: tracking category Region plus Profit and Loss by tracking category (Accounting API).</p>
+      <div class="l sub">Net profit by Region option</div>
+      <div class="row"><span>Region A</span><span class="t"><i style="width:100.0%"></i></span><b data-k="reg">2,310.15</b></div>
+      <div class="row"><span>Region B</span><span class="t"><i style="width:86.0%"></i></span><b data-k="reg">1,985.60</b></div>
+      <div class="row"><span>Region C</span><span class="t"><i style="width:65.0%"></i></span><b data-k="reg">1,502.30</b></div>
+      <div class="row"><span>Region D</span><span class="t"><i style="width:41.3%"></i></span><b data-k="reg">954.40</b></div>
+      <p class="note">The Demo Company has a tracking category called Region with four options. The connector lists those names but not the figures. Option names are shown generically here; the four amounts are invented and add to the real £6,752.45.</p>
+    </section>
+    <section class="panel" aria-labelledby="pay2">
+      <div class="ph"><h3 id="pay2">Payroll cost as a share of income</h3><span class="tag ill">Illustrative</span></div>
+      <p class="api">Needs: Payroll API, UK (pay runs and payslips). Access still to be confirmed.</p>
+<div class="scroll"><table><thead><tr><th>Month</th><th class="r">Payroll cost</th><th class="r">% of income</th><th></th></tr></thead><tbody><tr><td>Apr</td><td class="r" data-k="pay-0">1,720.00</td><td class="r">11.6%</td><td><span class="bar"><i class="" style="width:77.4%"></i></span></td></tr><tr><td>May</td><td class="r" data-k="pay-1">1,745.50</td><td class="r">11.4%</td><td><span class="bar"><i class="" style="width:75.8%"></i></span></td></tr><tr><td>Jun</td><td class="r" data-k="pay-2">1,780.00</td><td class="r">11.1%</td><td><span class="bar"><i class="" style="width:73.7%"></i></span></td></tr><tr><td>Jul</td><td class="r" data-k="pay-3">1,795.25</td><td class="r">11.3%</td><td><span class="bar"><i class="" style="width:75.3%"></i></span></td></tr><tr><td>Aug</td><td class="r" data-k="pay-4">1,820.00</td><td class="r">10.9%</td><td><span class="bar"><i class="" style="width:72.5%"></i></span></td></tr><tr><td>Sep</td><td class="r" data-k="pay-5">1,850.00</td><td class="r">10.5%</td><td><span class="bar"><i class="" style="width:69.7%"></i></span></td></tr></tbody></table></div>
+      <p class="note">All payroll figures are invented. September payroll sits inside the £2,650.47 of other overheads, so it does not change the real net profit.</p>
+    </section>
+    <section class="panel" aria-labelledby="prj">
+      <div class="ph"><h3 id="prj">Project profitability, September 2026</h3><span class="tag ill">Illustrative</span></div>
+      <p class="api">Needs: Projects API (projects, tasks and time). Access still to be confirmed.</p>
+<div class="scroll"><table><thead><tr><th>Project</th><th class="r">Billed</th><th class="r">Time cost</th><th class="r">Margin</th></tr></thead><tbody><tr><td>Ridgeway University: website rebuild</td><td class="r" data-k="prj-rev-0">4,125.00</td><td class="r" data-k="prj-cost-0">940.00</td><td class="r">77.2%</td></tr><tr><td>Port &amp; Philip Freight: reporting set-up</td><td class="r" data-k="prj-rev-1">2,100.00</td><td class="r" data-k="prj-cost-1">380.00</td><td class="r">81.9%</td></tr><tr><td>City Limousines: booking clean-up</td><td class="r" data-k="prj-rev-2">1,195.00</td><td class="r" data-k="prj-cost-2">160.00</td><td class="r">86.6%</td></tr></tbody></table></div>
+      <p class="note">Projects and costs are invented. Billed time adds to the £7,420.00 of consulting sales above. Time cost is the share of September payroll (£1,850.00, see the payroll panel) booked to each project; it sits inside overheads, not cost of sales.</p>
+    </section>
+    <section class="panel" aria-labelledby="ast">
+      <div class="ph"><h3 id="ast">Fixed assets and depreciation</h3><span class="tag ill">Illustrative</span></div>
+      <p class="api">Needs: Assets API (assets and asset types). Access still to be confirmed.</p>
+<div class="scroll"><table><thead><tr><th>Asset</th><th class="r">Cost</th><th class="r">Depreciated</th><th class="r">Book value</th><th class="r">Sep charge</th></tr></thead><tbody><tr><td>Delivery van</td><td class="r" data-k="ast-cost-0">18,000.00</td><td class="r" data-k="ast-acc-0">7,200.00</td><td class="r" data-k="ast-nbv-0">10,800.00</td><td class="r" data-k="ast-dep-0">300.00</td></tr><tr><td>Laptops</td><td class="r" data-k="ast-cost-1">6,000.00</td><td class="r" data-k="ast-acc-1">2,400.00</td><td class="r" data-k="ast-nbv-1">3,600.00</td><td class="r" data-k="ast-dep-1">100.00</td></tr><tr><td>Office furniture</td><td class="r" data-k="ast-cost-2">4,800.00</td><td class="r" data-k="ast-acc-2">960.00</td><td class="r" data-k="ast-nbv-2">3,840.00</td><td class="r" data-k="ast-dep-2">40.00</td></tr><tr><td><b>Total</b></td><td class="r" data-k="ast-cost-total">28,800.00</td><td class="r" data-k="ast-acc-total">10,560.00</td><td class="r" data-k="ast-nbv-total">18,240.00</td><td class="r" data-k="ast-dep-total">440.00</td></tr></tbody></table></div>
+      <p class="note">Assets are invented, written off in a straight line. The £440.00 September charge and the payroll above together stay inside the £2,650.47 of other overheads.</p>
+    </section>
+  </div>
+
+  <section class="panel" aria-labelledby="fam">
+    <h3 id="fam">The full Xero API, family by family</h3>
+    <div class="wide">
+<table><thead><tr><th>API family</th><th>What it covers</th><th>What it unlocks</th><th>Reach</th></tr></thead><tbody><tr><td>Accounting API: the part the connector reaches</td><td>Invoices, Bills, Contacts (lookup only), Accounts, Purchase Orders, Repeating templates, and the aged, Profit and Loss and Balance Sheet reports. Read-only</td><td>Who owes what, invoice and bill totals, summary profit and cash on a real organisation</td><td><span class="tag">Connector</span></td></tr><tr><td>Accounting API: documents, ledger-adjacent data and reports</td><td>Payments, CreditNotes, BankTransactions, Items, Budgets, ManualJournals, TrackingCategories, Quotes, Overpayments, Prepayments, ExpenseClaims, Reports (Trial Balance, Budget Summary, Bank Summary)</td><td>Margin by item, budget against actual, days to pay, cash flow, profit by region</td><td><span class="tag">Warehouse</span></td></tr><tr><td>Accounting API: Journals</td><td>The full general ledger, line by line</td><td>Exact ledger detail; otherwise rebuilt from reports, documents and bank transactions</td><td><span class="tag">Warehouse, Advanced tier only</span></td></tr><tr><td>Payroll API (UK, AU and NZ)</td><td>Employees, pay runs, payslips, timesheets, leave. UK is the one that matters here</td><td>Payroll cost as a share of income</td><td><span class="tag">Warehouse (access to confirm)</span></td></tr><tr><td>Projects API</td><td>Projects, tasks and time entries</td><td>Project profitability</td><td><span class="tag">Warehouse (access to confirm)</span></td></tr><tr><td>Assets API</td><td>Fixed assets and asset types</td><td>Fixed assets and depreciation</td><td><span class="tag">Warehouse (access to confirm)</span></td></tr><tr><td>Files API</td><td>Files, folders and the documents attached to transactions</td><td>Supporting documents next to the numbers; rarely needed for reporting</td><td><span class="tag">Warehouse</span></td></tr><tr><td>Practice Manager API</td><td>Xero Practice Manager, for accounting firms</td><td>Practice-level jobs and time. Listed by Xero as an Advanced tier feature</td><td><span class="tag">Warehouse, Advanced tier only</span></td></tr><tr><td>Finance API</td><td>Statements and cash validation, described by Xero as endpoints for loan applications</td><td>Not part of our plan</td><td><span class="tag blk">Neither (aimed at lenders)</span></td></tr><tr><td>Bank Feeds API</td><td>Pushes bank statements into Xero</td><td>Closed to financial institutions with a Xero partnership</td><td><span class="tag blk">Neither</span></td></tr><tr><td>App Store API</td><td>Subscription billing for Xero app partners</td><td>Not relevant to reporting</td><td><span class="tag blk">Neither</span></td></tr></tbody></table>
+    </div>
+    <p class="note">Identity (sign-in and connections) and Webhooks (change notifications) sit alongside these. "Connector" means Claude's Xero connector reaches it. "Warehouse" means it needs data copied out through Xero's API. The first three rows are one API, the Accounting API, split by what the connector reaches.</p>
+    <h4>What it costs to reach</h4>
+    <p class="note" style="margin-top:0">Xero API tiers (AUD per month, excluding tax; pricing effective 2 March 2026):</p>
+    <div class="scroll">
+    <table>
+      <thead><tr><th>Tier</th><th class="r">Per month</th><th class="r">Connections</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>Starter</td><td class="r">Free</td><td class="r">5</td><td>1,000 calls a day per organisation</td></tr>
+        <tr><td>Core</td><td class="r">$35</td><td class="r">50</td><td>5,000 calls a day per organisation</td></tr>
+        <tr><td>Plus</td><td class="r">$245</td><td class="r">1,000</td><td></td></tr>
+        <tr><td>Advanced</td><td class="r">$1,445</td><td class="r">10,000</td><td>The only tier with the Journals endpoint, with a security assessment and use-case approval</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="note">Starter covers the first five clients at no cost and Core up to fifty. The full ledger sits behind the Advanced tier, so for most clients we rebuild it from the Reports endpoints, documents (invoices, bills, credit notes and payments with their lines), manual journals, bank transactions and items. We are still confirming that every one of those endpoints is open on the Starter and Core tiers.</p>
+    <p class="note">Planned ingest scope: Invoices (lines), Bills, CreditNotes, Payments, ManualJournals, BankTransactions, Items, Contacts, Accounts, TrackingCategories and Budgets, plus the Profit and Loss report by month and tracking category and the Trial Balance.</p>
+  </section>
+
+  <p class="foot">Want this on your own Xero, with definitions agreed and every number proven? See the <a href="/services/claude-dashboards/">Claude Dashboards quick-start</a>, browse <a href="/custom-dashboards/">all sample dashboards</a>, or <a href="/contact/">talk to us</a>.</p>
+</div>
+</body>
+</html>

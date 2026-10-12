@@ -1,0 +1,1017 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xero warehouse dashboard (sample) | FactSmith</title>
+<meta name="description" content="An interactive sample of what a FactSmith warehouse on the full Xero API can show: profit bridge, margin by customer, ageing and days to pay, budget against actual, projects and assets, with slicers. Illustrative figures.">
+<link rel="canonical" href="https://www.factsmith.co.za/custom-dashboards/xero-warehouse/">
+<meta property="og:title" content="Xero warehouse dashboard (sample)">
+<meta property="og:description" content="Slicers, tabs and advanced visuals on a synthetic Xero warehouse. Illustrative figures that reconcile to Xero's Demo Company (UK).">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.factsmith.co.za/custom-dashboards/xero-warehouse/">
+<meta property="og:image" content="https://www.factsmith.co.za/custom-dashboards/xero-warehouse/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* FactSmith canonical tokens. Series colours follow the dataviz skill's validated categorical order. */
+:root { --bg: #F9F9F7; --panel: #FCFCFB; --ink: #0B0B0B; --muted: #5E6670; --line: #E1E1DC; --accent: #F26F1E; --accent-ink: #B4500F;
+  --grid: #E6E5E0; --axis: #8D8F94; --ghost: #898781; --good: #006300; --shadow: 0 6px 20px rgba(0,0,0,.14);
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #111110; --panel: #1A1A18; --ink: #EDECE8; --muted: #9C9B94; --line: #2E2D2A; --accent: #FF8A3D; --accent-ink: #FF8A3D;
+  --grid: #2C2C2A; --axis: #77756E; --ghost: #898781; --good: #0ca30c; --shadow: 0 6px 20px rgba(0,0,0,.5);
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg: #111110; --panel: #1A1A18; --ink: #EDECE8; --muted: #9C9B94; --line: #2E2D2A; --accent: #FF8A3D; --accent-ink: #FF8A3D;
+  --grid: #2C2C2A; --axis: #77756E; --ghost: #898781; --good: #0ca30c; --shadow: 0 6px 20px rgba(0,0,0,.5);
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.5 "Inter", system-ui, sans-serif; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 16px 16px 40px; display: grid; gap: 14px; }
+.wrap > * { min-width: 0; }
+a { color: var(--ink); text-decoration-color: var(--accent); text-underline-offset: 3px; }
+a:hover { color: var(--accent-ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+.brandbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand svg { width: 36px; height: 30px; flex: none; }
+.brand span { font-family: "Sora", sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -.02em; }
+.brandbar nav { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; }
+h1 { font-family: "Sora", sans-serif; font-size: clamp(24px, 4.6vw, 32px); letter-spacing: -.015em; margin: 0; text-wrap: balance; }
+h2 { font-family: "Sora", sans-serif; font-size: 18px; margin: 0 0 4px; }
+h3 { font-family: "Sora", sans-serif; font-size: 15px; margin: 0; }
+h4 { font-family: "Sora", sans-serif; font-size: 14px; margin: 16px 0 6px; }
+.lead { color: var(--muted); margin: 4px 0 0; max-width: 80ch; }
+.banner { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; border: 1px solid var(--accent); border-radius: 8px; padding: 8px 12px; background: var(--panel); font-size: 13px; }
+.badge { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 1px 8px; border-radius: 99px; border: 1px solid var(--accent); color: var(--accent-ink); }
+.slicers { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; z-index: 30; }
+@media (min-width: 900px) { .slicers { position: sticky; top: 6px; } }
+.fld { display: flex; flex-direction: column; gap: 4px; min-width: 0; border: 0; padding: 0; margin: 0; }
+.fld > legend, .fld > .lab { font-size: 12px; color: var(--muted); padding: 0; }
+.ctl { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; min-height: 34px; padding: 4px 10px; cursor: pointer; }
+.ctl:hover { border-color: var(--axis); }
+.seg { display: flex; }
+.seg button { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); margin-left: -1px; min-height: 34px; padding: 4px 9px; cursor: pointer; min-width: 38px; }
+.seg button:first-child { border-radius: 8px 0 0 8px; margin-left: 0; }
+.seg button:last-child { border-radius: 0 8px 8px 0; }
+.seg button[aria-pressed="true"], .pills input:checked + span { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.pills { display: flex; flex-wrap: wrap; gap: 4px; }
+.pills label { position: relative; cursor: pointer; }
+.pills input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.pills span { display: inline-block; min-height: 34px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); line-height: 20px; }
+.pills input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pills i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+details.multi { position: relative; }
+details.multi > summary { list-style: none; display: inline-block; max-width: 100%; }
+details.multi > summary::-webkit-details-marker { display: none; }
+details.multi .pop { position: absolute; z-index: 40; top: calc(100% + 4px); left: 0; width: 280px; max-width: calc(100vw - 48px); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 8px; }
+.pop input[type=search] { width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; margin-bottom: 6px; }
+.pop .acts { display: flex; gap: 6px; margin-bottom: 6px; }
+.pop .acts button { font: inherit; font-size: 12px; background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 6px; padding: 2px 8px; cursor: pointer; }
+.pop ul { list-style: none; margin: 0; padding: 0; max-height: 220px; overflow: auto; }
+.pop li label { display: flex; gap: 8px; align-items: center; padding: 4px 2px; cursor: pointer; }
+.reset { font: inherit; background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 8px; min-height: 34px; padding: 4px 12px; cursor: pointer; margin-left: auto; }
+.reset:hover { border-color: var(--accent); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; min-height: 0; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; border: 1px solid var(--line); background: var(--panel); border-radius: 99px; padding: 2px 4px 2px 10px; }
+.chip button { font: inherit; border: 0; background: none; color: var(--muted); cursor: pointer; padding: 0 6px; border-radius: 99px; }
+.chip button:hover { color: var(--accent-ink); }
+.tabs { display: flex; flex-wrap: wrap; gap: 2px 4px; border-bottom: 1px solid var(--line); }
+.tabs button { font: inherit; font-weight: 600; color: var(--muted); background: none; border: 0; border-bottom: 3px solid transparent; padding: 8px 10px; cursor: pointer; margin-bottom: -1px; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.tabs button:hover { color: var(--ink); }
+.panel[hidden] { display: none; }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 14px; }
+.grid > * { grid-column: span 12; min-width: 0; }
+@media (min-width: 900px) { .grid > .half { grid-column: span 6; } .grid > .third { grid-column: span 4; } .grid > .twothird { grid-column: span 8; } }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; min-width: 0; }
+.card.ignored { border-style: dashed; }
+.ch { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 10px; }
+.sub { color: var(--muted); font-size: 12.5px; margin: 2px 0 8px; }
+.scope { font-size: 11.5px; color: var(--muted); }
+.card.ignored .scope { color: var(--accent-ink); font-weight: 600; }
+.tvb { font: inherit; font-size: 12px; background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 1px 8px; cursor: pointer; }
+.tvb[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
+.chart { width: 100%; min-width: 0; position: relative; }
+.chart svg { display: block; max-width: 100%; height: auto; overflow: visible; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--muted); margin: 0 0 6px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
+.legend i.ln { height: 0; width: 16px; border-top: 2px solid; border-radius: 0; }
+.legend i.ds { border-top-style: dashed; }
+.note { color: var(--muted); font-size: 12.5px; margin: 8px 0 0; }
+.tv { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 500; font-size: 12px; }
+th button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+th button:hover { color: var(--ink); }
+td.r, th.r { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; min-width: 0; }
+.kpi.ignored { border-style: dashed; }
+.kpi .l { color: var(--muted); font-size: 12.5px; }
+.kpi .n { font-family: "Sora", sans-serif; font-size: clamp(20px, 3.4vw, 26px); font-weight: 700; letter-spacing: -.02em; line-height: 1.2; margin: 2px 0; }
+.kpi .d { font-size: 12px; color: var(--muted); min-height: 18px; }
+.kpi .sp { margin-top: 4px; height: 30px; }
+.kpi .sc { font-size: 11px; color: var(--muted); }
+.kpi.ignored .sc { color: var(--accent-ink); font-weight: 600; }
+#tip { position: fixed; z-index: 100; pointer-events: none; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); padding: 8px 10px; font-size: 12.5px; max-width: 260px; opacity: 0; transition: opacity .1s; }
+#tip.on { opacity: 1; }
+#tip .tt { font-weight: 600; margin-bottom: 4px; }
+#tip .tr { display: flex; align-items: center; gap: 8px; justify-content: space-between; }
+#tip .tr .k { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+#tip .tr .k i { display: inline-block; width: 12px; border-top: 2px solid; }
+#tip .tr b { font-variant-numeric: tabular-nums; }
+svg text { font-family: "Inter", system-ui, sans-serif; fill: var(--muted); font-size: 11px; }
+svg text.v { fill: var(--ink); font-weight: 600; }
+svg .mk { transition: opacity .12s; }
+svg .hit:focus-visible, svg .hit:hover { outline: none; }
+svg .sel { stroke: var(--ink); stroke-width: 2; }
+svg [tabindex]:focus { outline: none; }
+svg [tabindex]:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.diagram svg text { font-size: 11px; }
+.how { display: grid; gap: 14px; }
+.cav { display: grid; gap: 6px; }
+.cav p { margin: 0; }
+.foot { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+@media (max-width: 640px) {
+  .wrap { padding: 12px 12px 32px; }
+  .card { padding: 10px; }
+  .slicers { gap: 10px; }
+  .fld.grow { flex: 1 1 100%; }
+  .reset { margin-left: 0; }
+  .tabs button { padding: 8px 8px; font-size: 13px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  svg .mk { animation: fadein .25s ease-out; }
+  @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brandbar">
+    <a class="brand" href="https://www.factsmith.co.za" aria-label="FactSmith home"><svg viewBox="0 0 48 40" aria-hidden="true"><rect width="36" height="6" x="6" y="30" fill="var(--ink)" opacity="0.55" rx="3"/><path fill="#F26F1E" d="M24 4c1 10 1.8 10.8 14 14-12.2 3.2-13 4-14 14-1-10-1.8-10.8-14-14 12.2-3.2 13-4 14-14"/></svg><span>FactSmith</span></a>
+    <nav aria-label="Related pages"><a href="/custom-dashboards/xero/">Back to the Xero explainer</a><a href="/custom-dashboards/">All sample dashboards</a><a href="/contact/">Talk to us</a></nav>
+  </div>
+
+  <div class="banner" role="note"><span class="badge">Illustrative</span><span>Sample data on a FactSmith Xero warehouse. Every figure is invented, and the September totals reconcile to Xero's Demo Company (UK). <a href="/custom-dashboards/xero/">See what is real and what is illustrative</a>.</span></div>
+
+  <header>
+    <h1>Xero warehouse dashboard</h1>
+    <p class="lead">What becomes possible when your Xero data is copied into a warehouse through the full Xero API: bridges, margin by customer, ageing, days to pay, budget against actual, projects and assets. Use the slicers; every card tells you which ones it respects.</p>
+  </header>
+
+  <form class="slicers" id="slicers" aria-label="Slicers" onsubmit="return false">
+    <fieldset class="fld"><legend>Period</legend>
+      <div class="seg" id="sl-period" role="group" aria-label="Period">
+        <button type="button" data-p="0">Apr</button><button type="button" data-p="1">May</button><button type="button" data-p="2">Jun</button><button type="button" data-p="3">Jul</button><button type="button" data-p="4">Aug</button><button type="button" data-p="5">Sep</button><button type="button" data-p="fy">FYTD</button>
+      </div>
+    </fieldset>
+    <fieldset class="fld"><legend>Region</legend><div class="pills" id="sl-region"></div></fieldset>
+    <div class="fld grow"><span class="lab" id="cus-l">Customer</span>
+      <details class="multi" id="sl-cust"><summary class="ctl" id="cus-sum" aria-labelledby="cus-l cus-sum">All customers</summary>
+        <div class="pop"><input type="search" id="cus-q" placeholder="Search customers" aria-label="Search customers"><div class="acts"><button type="button" id="cus-all">All</button></div><ul id="cus-list"></ul></div>
+      </details></div>
+    <div class="fld grow"><label class="lab" for="sl-item">Item</label><select class="ctl" id="sl-item"></select></div>
+    <button type="button" class="reset" id="reset">Reset</button>
+  </form>
+  <div class="chips" id="chips" aria-live="polite"></div>
+
+  <div class="tabs" role="tablist" aria-label="Dashboard sections" id="tabs">
+    <button role="tab" id="t-overview" aria-controls="p-overview" data-tab="overview">Overview</button>
+    <button role="tab" id="t-sales" aria-controls="p-sales" data-tab="sales">Sales and margin</button>
+    <button role="tab" id="t-cash" aria-controls="p-cash" data-tab="cash">Receivables and cash</button>
+    <button role="tab" id="t-costs" aria-controls="p-costs" data-tab="costs">Costs and people</button>
+    <button role="tab" id="t-projects" aria-controls="p-projects" data-tab="projects">Projects and assets</button>
+    <button role="tab" id="t-how" aria-controls="p-how" data-tab="how">How it is built</button>
+  </div>
+
+  <section class="panel" id="p-overview" role="tabpanel" aria-labelledby="t-overview" tabindex="-1">
+    <div class="kpis" id="kpis"></div>
+    <div class="grid" style="margin-top:14px">
+      <section class="card half" data-id="waterfall" data-scope="period region" aria-labelledby="h-waterfall"><div class="ch"><h3 id="h-waterfall">Profit bridge: income to net profit</h3></div>
+        <p class="sub" id="s-waterfall"></p><div class="chart" id="c-waterfall"></div></section>
+      <section class="card half" data-id="combo" data-scope="region" aria-labelledby="h-combo"><div class="ch"><h3 id="h-combo">Income and net profit by month</h3></div>
+        <p class="sub">Bars are income, the line is net profit, the dashed line is budgeted income. The selected period is highlighted.</p>
+        <div class="legend"><span><i style="background:var(--s1)"></i>Income</span><span><i class="ln" style="border-color:var(--s3)"></i>Net profit</span><span><i class="ln ds" style="border-color:var(--ghost)"></i>Budgeted income</span></div>
+        <div class="chart" id="c-combo"></div></section>
+    </div>
+  </section>
+
+  <section class="panel" id="p-sales" role="tabpanel" aria-labelledby="t-sales" tabindex="-1" hidden>
+    <div class="grid">
+      <section class="card twothird" data-id="treemap" data-scope="period region customer item" aria-labelledby="h-treemap"><div class="ch"><h3 id="h-treemap">Income by customer, coloured by margin</h3></div>
+        <p class="sub">Tile area is income. Blue is above the average margin of the tiles shown, red is below. Select a tile to filter the whole page to that customer; select it again to clear.</p>
+        <div class="chart" id="c-treemap"></div></section>
+      <section class="card third" data-id="bubble" data-scope="period region customer item" aria-labelledby="h-bubble"><div class="ch"><h3 id="h-bubble">Price against volume by item</h3></div>
+        <p class="sub">One bubble per customer and item. Bubble area is income; both axes are logarithmic.</p>
+        <div class="legend" id="lg-items"></div><div class="chart" id="c-bubble"></div></section>
+      <section class="card" data-id="heat" data-scope="period region customer item" aria-labelledby="h-heat"><div class="ch"><h3 id="h-heat">Income by customer and item</h3></div>
+        <p class="sub">Each cell is income for that customer and item in the selected period. Darker is more.</p>
+        <div class="chart" id="c-heat"></div></section>
+    </div>
+  </section>
+
+  <section class="panel" id="p-cash" role="tabpanel" aria-labelledby="t-cash" tabindex="-1" hidden>
+    <div class="grid">
+      <section class="card half" data-id="aged" data-scope="region customer item" aria-labelledby="h-aged"><div class="ch"><h3 id="h-aged">Aged debt, as at 10 October 2026</h3></div>
+        <p class="sub" id="s-aged"></p><div class="chart" id="c-aged"></div></section>
+      <section class="card half" data-id="swarm" data-scope="period region customer item" aria-labelledby="h-swarm"><div class="ch"><h3 id="h-swarm">Days to pay, one dot per invoice</h3></div>
+        <p class="sub" id="s-swarm"></p>
+        <div class="chart" id="c-swarm"></div></section>
+      <section class="card half" data-id="cashwf" data-scope="period" aria-labelledby="h-cashwf"><div class="ch"><h3 id="h-cashwf">Cash bridge</h3></div>
+        <p class="sub" id="s-cashwf"></p><div class="chart" id="c-cashwf"></div></section>
+      <section class="card half" data-id="runway" data-scope="" aria-labelledby="h-runway"><div class="ch"><h3 id="h-runway">Cash outlook, next three months</h3></div>
+        <p class="sub">Closing cash by month. The forecast adds the average net cash flow of the last three months, as the recurring invoice and bill templates would, with a widening range.</p>
+        <div class="legend"><span><i class="ln" style="border-color:var(--s1)"></i>Closing cash</span><span><i class="ln ds" style="border-color:var(--s1)"></i>Forecast</span><span><i style="background:var(--s1);opacity:.2"></i>Range</span></div>
+        <div class="chart" id="c-runway"></div></section>
+    </div>
+  </section>
+
+  <section class="panel" id="p-costs" role="tabpanel" aria-labelledby="t-costs" tabindex="-1" hidden>
+    <div class="grid">
+      <section class="card half" data-id="bullets" data-scope="period" aria-labelledby="h-bullets"><div class="ch"><h3 id="h-bullets">Budget against actual by account</h3></div>
+        <p class="sub">The bar is actual, the tick is budget, the grey bands run to 80%, 100% and 120% of budget. Orange means it landed on the wrong side of budget.</p>
+        <div class="chart" id="c-bullets"></div></section>
+      <section class="card half" data-id="exptree" data-scope="period region" aria-labelledby="h-exptree"><div class="ch"><h3 id="h-exptree">Where the money goes, by account and supplier</h3></div>
+        <p class="sub">Tile area is cost. Colour is the account; the tiles inside are suppliers.</p>
+        <div class="legend" id="lg-acc"></div><div class="chart" id="c-exptree"></div></section>
+      <section class="card half" data-id="payline" data-scope="region" aria-labelledby="h-payline"><div class="ch"><h3 id="h-payline">Payroll as a share of income</h3></div>
+        <p class="sub">Wages divided by total income, by month, for the selected regions. The selected period is highlighted.</p>
+        <div class="chart" id="c-payline"></div></section>
+      <section class="card half" data-id="slope" data-scope="region" aria-labelledby="h-slope"><div class="ch"><h3 id="h-slope">Payroll share by region, April against September</h3></div>
+        <p class="sub">Each line is a region. A line that falls means payroll took a smaller share of that region's income by September.</p>
+        <div class="chart" id="c-slope"></div></section>
+    </div>
+  </section>
+
+  <section class="panel" id="p-projects" role="tabpanel" aria-labelledby="t-projects" tabindex="-1" hidden>
+    <div class="grid">
+      <section class="card half" data-id="dumb" data-scope="period customer" aria-labelledby="h-dumb"><div class="ch"><h3 id="h-dumb">Project billing against time cost</h3></div>
+        <p class="sub">Each project is a line from time cost to amount billed. A longer line is more margin.</p>
+        <div class="legend"><span><i style="background:var(--s1);border-radius:50%"></i>Billed</span><span><i style="background:var(--s2);border-radius:50%"></i>Time cost</span></div>
+        <div class="chart" id="c-dumb"></div></section>
+      <section class="card half" data-id="assetarea" data-scope="region" aria-labelledby="h-assetarea"><div class="ch"><h3 id="h-assetarea">Fixed asset book value</h3></div>
+        <p class="sub">Straight-line depreciation, month-end book value by asset.</p>
+        <div class="legend" id="lg-assets"></div><div class="chart" id="c-assetarea"></div></section>
+      <section class="card" data-id="deptable" data-scope="period region" aria-labelledby="h-deptable"><div class="ch"><h3 id="h-deptable">Depreciation schedule</h3></div>
+        <p class="sub">Select a column heading to sort. Book value is at the end of the selected month, or at the end of September for FYTD.</p>
+        <div id="c-deptable" class="tv"></div></section>
+    </div>
+  </section>
+
+  <section class="panel" id="p-how" role="tabpanel" aria-labelledby="t-how" tabindex="-1" hidden>
+    <div class="how">
+      <section class="card" aria-labelledby="h-arch"><h3 id="h-arch">The warehouse behind this page</h3>
+        <p class="sub">A star schema: nine fact tables around shared dimensions. Each fact is fed by the Xero API endpoint named in the table. The data here is synthetic and generated from a fixed seed.</p>
+        <div class="chart diagram" id="c-arch"></div>
+        <div class="tv" id="c-tables"></div></section>
+      <section class="card" aria-labelledby="h-cav"><h3 id="h-cav">What to know before relying on it</h3>
+        <div class="cav">
+          <p><b>These are illustrative figures.</b> They were generated to add up to the real September 2026 totals from Xero's Demo Company (UK): income £17,697.71, net profit £6,752.45, receivables £20,441.38, payables £9,079.59 and cash £5,274.30. Everything else is invented. The cash bridge adds drawings and tax as a modelled outflow and a small VAT and timing line so cash ties to the bank.</p>
+          <p><b>Claude's Xero connector cannot reach most of this.</b> Payments, budgets, items, bank transactions, tracking categories, payroll, projects and assets need data copied out through the Xero API. <a href="/custom-dashboards/xero/">The explainer page</a> lists what the connector can and cannot read.</p>
+          <p><b>Xero API tiers.</b> The Starter tier is free for up to five connections and Core covers up to fifty. The full general ledger (Journals) sits behind the Advanced tier, so for most clients we rebuild it from reports, documents and bank transactions. We are still confirming that every endpoint is open on Starter and Core, and that Payroll, Projects and Assets access can be granted.</p>
+          <p><b>Your own Xero.</b> Want this on your numbers, with definitions agreed and every figure proven against Xero's reports? See the <a href="/services/claude-dashboards/">Claude Dashboards quick-start</a> or <a href="/contact/">talk to us</a>.</p>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <p class="foot">Sample data. Net profit and the bridge ignore Customer and Item because costs are not split by customer. Profit figures exclude VAT; cash figures include it. Built by FactSmith; the generator is reproducible from the repository.</p>
+</div>
+<div id="tip" role="tooltip"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>const DATA={"meta":{"asat":"2026-10-10","seed":20261010,"months":["Apr","May","Jun","Jul","Aug","Sep"],"tables":[["fact_invoice_line","One row per invoice line","Invoices (with line items), Items","dim_date, dim_customer, dim_item, dim_region"],["fact_payment","One row per customer payment (inv 0 = invoices raised before April)","Payments","fact_invoice_line, dim_date"],["fact_other_rev","One row per non-invoice income line","BankTransactions (receive), Reports","dim_date, dim_region, dim_account"],["fact_bill_line","One row per supplier bill line","Bills (with line items), Accounts","dim_date, dim_supplier, dim_account, dim_region"],["fact_bank","One row per month, direction and kind","BankTransactions, Reports (Bank Summary)","dim_date"],["fact_budget","One row per month and account","Budgets, Reports (Budget Summary)","dim_date, dim_account"],["fact_payroll","One row per month and region","Payroll API (UK): pay runs, payslips","dim_date, dim_region"],["fact_project_time","One row per month and project","Projects API: projects, tasks, time","dim_date, dim_project, dim_customer"],["fact_asset_dep","One row per month and asset","Assets API: assets, asset types","dim_date, dim_asset, dim_region"]]},"dim_date":{"c":["date","mi","mon","dow"],"r":[["2026-04-01",0,"Apr","Wed"],["2026-04-02",0,"Apr","Thu"],["2026-04-03",0,"Apr","Fri"],["2026-04-04",0,"Apr","Sat"],["2026-04-05",0,"Apr","Sun"],["2026-04-06",0,"Apr","Mon"],["2026-04-07",0,"Apr","Tue"],["2026-04-08",0,"Apr","Wed"],["2026-04-09",0,"Apr","Thu"],["2026-04-10",0,"Apr","Fri"],["2026-04-11",0,"Apr","Sat"],["2026-04-12",0,"Apr","Sun"],["2026-04-13",0,"Apr","Mon"],["2026-04-14",0,"Apr","Tue"],["2026-04-15",0,"Apr","Wed"],["2026-04-16",0,"Apr","Thu"],["2026-04-17",0,"Apr","Fri"],["2026-04-18",0,"Apr","Sat"],["2026-04-19",0,"Apr","Sun"],["2026-04-20",0,"Apr","Mon"],["2026-04-21",0,"Apr","Tue"],["2026-04-22",0,"Apr","Wed"],["2026-04-23",0,"Apr","Thu"],["2026-04-24",0,"Apr","Fri"],["2026-04-25",0,"Apr","Sat"],["2026-04-26",0,"Apr","Sun"],["2026-04-27",0,"Apr","Mon"],["2026-04-28",0,"Apr","Tue"],["2026-04-29",0,"Apr","Wed"],["2026-04-30",0,"Apr","Thu"],["2026-05-01",1,"May","Fri"],["2026-05-02",1,"May","Sat"],["2026-05-03",1,"May","Sun"],["2026-05-04",1,"May","Mon"],["2026-05-05",1,"May","Tue"],["2026-05-06",1,"May","Wed"],["2026-05-07",1,"May","Thu"],["2026-05-08",1,"May","Fri"],["2026-05-09",1,"May","Sat"],["2026-05-10",1,"May","Sun"],["2026-05-11",1,"May","Mon"],["2026-05-12",1,"May","Tue"],["2026-05-13",1,"May","Wed"],["2026-05-14",1,"May","Thu"],["2026-05-15",1,"May","Fri"],["2026-05-16",1,"May","Sat"],["2026-05-17",1,"May","Sun"],["2026-05-18",1,"May","Mon"],["2026-05-19",1,"May","Tue"],["2026-05-20",1,"May","Wed"],["2026-05-21",1,"May","Thu"],["2026-05-22",1,"May","Fri"],["2026-05-23",1,"May","Sat"],["2026-05-24",1,"May","Sun"],["2026-05-25",1,"May","Mon"],["2026-05-26",1,"May","Tue"],["2026-05-27",1,"May","Wed"],["2026-05-28",1,"May","Thu"],["2026-05-29",1,"May","Fri"],["2026-05-30",1,"May","Sat"],["2026-05-31",1,"May","Sun"],["2026-06-01",2,"Jun","Mon"],["2026-06-02",2,"Jun","Tue"],["2026-06-03",2,"Jun","Wed"],["2026-06-04",2,"Jun","Thu"],["2026-06-05",2,"Jun","Fri"],["2026-06-06",2,"Jun","Sat"],["2026-06-07",2,"Jun","Sun"],["2026-06-08",2,"Jun","Mon"],["2026-06-09",2,"Jun","Tue"],["2026-06-10",2,"Jun","Wed"],["2026-06-11",2,"Jun","Thu"],["2026-06-12",2,"Jun","Fri"],["2026-06-13",2,"Jun","Sat"],["2026-06-14",2,"Jun","Sun"],["2026-06-15",2,"Jun","Mon"],["2026-06-16",2,"Jun","Tue"],["2026-06-17",2,"Jun","Wed"],["2026-06-18",2,"Jun","Thu"],["2026-06-19",2,"Jun","Fri"],["2026-06-20",2,"Jun","Sat"],["2026-06-21",2,"Jun","Sun"],["2026-06-22",2,"Jun","Mon"],["2026-06-23",2,"Jun","Tue"],["2026-06-24",2,"Jun","Wed"],["2026-06-25",2,"Jun","Thu"],["2026-06-26",2,"Jun","Fri"],["2026-06-27",2,"Jun","Sat"],["2026-06-28",2,"Jun","Sun"],["2026-06-29",2,"Jun","Mon"],["2026-06-30",2,"Jun","Tue"],["2026-07-01",3,"Jul","Wed"],["2026-07-02",3,"Jul","Thu"],["2026-07-03",3,"Jul","Fri"],["2026-07-04",3,"Jul","Sat"],["2026-07-05",3,"Jul","Sun"],["2026-07-06",3,"Jul","Mon"],["2026-07-07",3,"Jul","Tue"],["2026-07-08",3,"Jul","Wed"],["2026-07-09",3,"Jul","Thu"],["2026-07-10",3,"Jul","Fri"],["2026-07-11",3,"Jul","Sat"],["2026-07-12",3,"Jul","Sun"],["2026-07-13",3,"Jul","Mon"],["2026-07-14",3,"Jul","Tue"],["2026-07-15",3,"Jul","Wed"],["2026-07-16",3,"Jul","Thu"],["2026-07-17",3,"Jul","Fri"],["2026-07-18",3,"Jul","Sat"],["2026-07-19",3,"Jul","Sun"],["2026-07-20",3,"Jul","Mon"],["2026-07-21",3,"Jul","Tue"],["2026-07-22",3,"Jul","Wed"],["2026-07-23",3,"Jul","Thu"],["2026-07-24",3,"Jul","Fri"],["2026-07-25",3,"Jul","Sat"],["2026-07-26",3,"Jul","Sun"],["2026-07-27",3,"Jul","Mon"],["2026-07-28",3,"Jul","Tue"],["2026-07-29",3,"Jul","Wed"],["2026-07-30",3,"Jul","Thu"],["2026-07-31",3,"Jul","Fri"],["2026-08-01",4,"Aug","Sat"],["2026-08-02",4,"Aug","Sun"],["2026-08-03",4,"Aug","Mon"],["2026-08-04",4,"Aug","Tue"],["2026-08-05",4,"Aug","Wed"],["2026-08-06",4,"Aug","Thu"],["2026-08-07",4,"Aug","Fri"],["2026-08-08",4,"Aug","Sat"],["2026-08-09",4,"Aug","Sun"],["2026-08-10",4,"Aug","Mon"],["2026-08-11",4,"Aug","Tue"],["2026-08-12",4,"Aug","Wed"],["2026-08-13",4,"Aug","Thu"],["2026-08-14",4,"Aug","Fri"],["2026-08-15",4,"Aug","Sat"],["2026-08-16",4,"Aug","Sun"],["2026-08-17",4,"Aug","Mon"],["2026-08-18",4,"Aug","Tue"],["2026-08-19",4,"Aug","Wed"],["2026-08-20",4,"Aug","Thu"],["2026-08-21",4,"Aug","Fri"],["2026-08-22",4,"Aug","Sat"],["2026-08-23",4,"Aug","Sun"],["2026-08-24",4,"Aug","Mon"],["2026-08-25",4,"Aug","Tue"],["2026-08-26",4,"Aug","Wed"],["2026-08-27",4,"Aug","Thu"],["2026-08-28",4,"Aug","Fri"],["2026-08-29",4,"Aug","Sat"],["2026-08-30",4,"Aug","Sun"],["2026-08-31",4,"Aug","Mon"],["2026-09-01",5,"Sep","Tue"],["2026-09-02",5,"Sep","Wed"],["2026-09-03",5,"Sep","Thu"],["2026-09-04",5,"Sep","Fri"],["2026-09-05",5,"Sep","Sat"],["2026-09-06",5,"Sep","Sun"],["2026-09-07",5,"Sep","Mon"],["2026-09-08",5,"Sep","Tue"],["2026-09-09",5,"Sep","Wed"],["2026-09-10",5,"Sep","Thu"],["2026-09-11",5,"Sep","Fri"],["2026-09-12",5,"Sep","Sat"],["2026-09-13",5,"Sep","Sun"],["2026-09-14",5,"Sep","Mon"],["2026-09-15",5,"Sep","Tue"],["2026-09-16",5,"Sep","Wed"],["2026-09-17",5,"Sep","Thu"],["2026-09-18",5,"Sep","Fri"],["2026-09-19",5,"Sep","Sat"],["2026-09-20",5,"Sep","Sun"],["2026-09-21",5,"Sep","Mon"],["2026-09-22",5,"Sep","Tue"],["2026-09-23",5,"Sep","Wed"],["2026-09-24",5,"Sep","Thu"],["2026-09-25",5,"Sep","Fri"],["2026-09-26",5,"Sep","Sat"],["2026-09-27",5,"Sep","Sun"],["2026-09-28",5,"Sep","Mon"],["2026-09-29",5,"Sep","Tue"],["2026-09-30",5,"Sep","Wed"]]},"dim_customer":{"c":["id","name"],"r":[[0,"Ridgeway University"],[1,"Port & Philip Freight"],[2,"City Limousines"],[3,"DIISR"],[4,"Bayside Club"],[5,"Boom FM"],[6,"Marine Systems"],[7,"Petrie Wholesaling"],[8,"Rex Media Group"],[9,"Westside Pharmacy"]]},"dim_item":{"c":["id","name","unit"],"r":[[0,"Consulting (hourly)","hour"],[1,"Design package","package"],[2,"Support retainer","month"],[3,"Hardware and supplies","unit"]]},"dim_region":{"c":["id","name"],"r":[[0,"Region A"],[1,"Region B"],[2,"Region C"],[3,"Region D"]]},"dim_account":{"c":["id","name","class"],"r":[[0,"Sales","income"],[1,"Other Revenue","income"],[2,"Purchases","cost of sales"],[3,"Advertising & Marketing","overhead"],[4,"Wages","overhead"],[5,"Depreciation","overhead"],[6,"Rent","overhead"],[7,"Other overheads","overhead"]]},"dim_supplier":{"c":["id","name"],"r":[[0,"SMART Agency"],[1,"ABC Furniture"],[2,"Hoyt Productions"],[3,"Pure Print"],[4,"Metro Signage"],[5,"Orbit Media"],[6,"Beacon Social"],[7,"Rivet Photography"],[8,"Northgate Events"],[9,"Lumen Video"],[10,"Cardinal Billboards"],[11,"Fieldwork Research"],[12,"Studio Nine"],[13,"Bayside Wholesale"],[14,"Central Copiers"],[15,"Prime Properties"],[16,"PowerDirect"],[17,"Net Connect"]]},"dim_project":{"c":["id","name","customer"],"r":[[0,"Website rebuild",0],[1,"Reporting set-up",1],[2,"Booking clean-up",2]]},"dim_asset":{"c":["id","name","cost","life","region"],"r":[[0,"Delivery van",1800000,60,0],[1,"Laptops",600000,60,1],[2,"Office furniture",480000,120,2]]},"fact_invoice":{"c":["inv","date","due","customer","open"],"r":[[1,"2026-04-01","2026-05-01",2,0],[2,"2026-04-01","2026-05-01",7,0],[3,"2026-04-04","2026-05-04",2,0],[4,"2026-04-05","2026-05-05",5,0],[5,"2026-04-06","2026-05-06",1,0],[6,"2026-04-07","2026-05-07",0,0],[7,"2026-04-07","2026-05-07",9,0],[8,"2026-04-08","2026-05-08",8,0],[9,"2026-04-08","2026-05-08",9,0],[10,"2026-04-09","2026-05-09",0,0],[11,"2026-04-09","2026-05-09",0,0],[12,"2026-04-10","2026-05-10",0,0],[13,"2026-04-11","2026-05-11",3,0],[14,"2026-04-12","2026-05-12",6,0],[15,"2026-04-14","2026-05-14",0,0],[16,"2026-04-14","2026-05-14",3,0],[17,"2026-04-14","2026-05-14",7,0],[18,"2026-04-16","2026-05-16",9,0],[19,"2026-04-17","2026-05-17",4,0],[20,"2026-04-19","2026-05-19",0,0],[21,"2026-04-19","2026-05-19",2,0],[22,"2026-04-19","2026-05-19",4,0],[23,"2026-04-20","2026-05-20",1,0],[24,"2026-04-20","2026-05-20",4,0],[25,"2026-04-22","2026-05-22",0,0],[26,"2026-04-23","2026-05-23",1,0],[27,"2026-04-23","2026-05-23",5,0],[28,"2026-04-23","2026-05-23",6,0],[29,"2026-04-23","2026-05-23",8,0],[30,"2026-04-23","2026-05-23",8,0],[31,"2026-04-25","2026-05-25",1,0],[32,"2026-04-25","2026-05-25",3,0],[33,"2026-04-25","2026-05-25",6,0],[34,"2026-04-26","2026-05-26",7,0],[35,"2026-04-27","2026-05-27",1,0],[36,"2026-04-28","2026-05-28",2,0],[37,"2026-04-28","2026-05-28",5,0],[38,"2026-05-01","2026-05-31",2,0],[39,"2026-05-01","2026-05-31",2,0],[40,"2026-05-01","2026-05-31",6,0],[41,"2026-05-01","2026-05-31",7,0],[42,"2026-05-01","2026-05-31",8,0],[43,"2026-05-02","2026-06-01",8,0],[44,"2026-05-05","2026-06-04",5,0],[45,"2026-05-06","2026-06-05",0,0],[46,"2026-05-06","2026-06-05",3,0],[47,"2026-05-06","2026-06-05",5,0],[48,"2026-05-07","2026-06-06",1,0],[49,"2026-05-08","2026-06-07",0,0],[50,"2026-05-08","2026-06-07",6,0],[51,"2026-05-09","2026-06-08",1,0],[52,"2026-05-10","2026-06-09",3,0],[53,"2026-05-11","2026-06-10",7,0],[54,"2026-05-12","2026-06-11",1,0],[55,"2026-05-14","2026-06-13",2,0],[56,"2026-05-14","2026-06-13",6,0],[57,"2026-05-15","2026-06-14",8,0],[58,"2026-05-16","2026-06-15",3,0],[59,"2026-05-16","2026-06-15",9,0],[60,"2026-05-18","2026-06-17",1,0],[61,"2026-05-18","2026-06-17",2,0],[62,"2026-05-19","2026-06-18",9,0],[63,"2026-05-20","2026-06-19",4,0],[64,"2026-05-21","2026-06-20",0,0],[65,"2026-05-21","2026-06-20",0,0],[66,"2026-05-22","2026-06-21",7,0],[67,"2026-05-23","2026-06-22",0,0],[68,"2026-05-25","2026-06-24",4,0],[69,"2026-05-25","2026-06-24",4,0],[70,"2026-05-26","2026-06-25",0,0],[71,"2026-05-26","2026-06-25",1,0],[72,"2026-05-27","2026-06-26",9,0],[73,"2026-05-28","2026-06-27",5,0],[74,"2026-06-01","2026-07-01",5,0],[75,"2026-06-01","2026-07-01",9,0],[76,"2026-06-02","2026-07-02",2,0],[77,"2026-06-03","2026-07-03",0,0],[78,"2026-06-03","2026-07-03",5,0],[79,"2026-06-03","2026-07-03",6,0],[80,"2026-06-03","2026-07-03",7,0],[81,"2026-06-04","2026-07-04",1,0],[82,"2026-06-04","2026-07-04",3,0],[83,"2026-06-05","2026-07-05",0,0],[84,"2026-06-05","2026-07-05",6,0],[85,"2026-06-07","2026-07-07",3,1],[86,"2026-06-07","2026-07-07",9,0],[87,"2026-06-09","2026-07-09",5,0],[88,"2026-06-10","2026-07-10",7,0],[89,"2026-06-10","2026-07-10",8,0],[90,"2026-06-11","2026-07-11",1,0],[91,"2026-06-12","2026-07-12",1,0],[92,"2026-06-12","2026-07-12",6,0],[93,"2026-06-15","2026-07-15",2,0],[94,"2026-06-16","2026-07-16",2,0],[95,"2026-06-17","2026-07-17",0,0],[96,"2026-06-17","2026-07-17",3,0],[97,"2026-06-17","2026-07-17",3,0],[98,"2026-06-19","2026-07-19",0,0],[99,"2026-06-20","2026-07-20",0,0],[100,"2026-06-20","2026-07-20",0,1],[101,"2026-06-20","2026-07-20",1,0],[102,"2026-06-21","2026-07-21",4,0],[103,"2026-06-21","2026-07-21",4,0],[104,"2026-06-21","2026-07-21",4,0],[105,"2026-06-24","2026-07-24",2,0],[106,"2026-06-24","2026-07-24",7,0],[107,"2026-06-24","2026-07-24",8,0],[108,"2026-06-24","2026-07-24",9,0],[109,"2026-06-25","2026-07-25",0,0],[110,"2026-06-25","2026-07-25",8,0],[111,"2026-07-01","2026-07-31",1,0],[112,"2026-07-01","2026-07-31",4,0],[113,"2026-07-02","2026-08-01",1,1],[114,"2026-07-04","2026-08-03",3,0],[115,"2026-07-05","2026-08-04",2,0],[116,"2026-07-06","2026-08-05",8,0],[117,"2026-07-07","2026-08-06",7,0],[118,"2026-07-08","2026-08-07",0,0],[119,"2026-07-09","2026-08-08",1,0],[120,"2026-07-11","2026-08-10",8,0],[121,"2026-07-12","2026-08-11",2,0],[122,"2026-07-12","2026-08-11",6,0],[123,"2026-07-13","2026-08-12",0,0],[124,"2026-07-14","2026-08-13",7,0],[125,"2026-07-16","2026-08-15",0,0],[126,"2026-07-17","2026-08-16",1,0],[127,"2026-07-17","2026-08-16",3,0],[128,"2026-07-17","2026-08-16",4,0],[129,"2026-07-17","2026-08-16",5,0],[130,"2026-07-18","2026-08-17",9,0],[131,"2026-07-19","2026-08-18",2,0],[132,"2026-07-21","2026-08-20",1,0],[133,"2026-07-21","2026-08-20",7,0],[134,"2026-07-22","2026-08-21",1,0],[135,"2026-07-23","2026-08-22",4,0],[136,"2026-07-24","2026-08-23",6,0],[137,"2026-07-24","2026-08-23",9,0],[138,"2026-07-25","2026-08-24",6,0],[139,"2026-07-26","2026-08-25",0,0],[140,"2026-07-26","2026-08-25",3,0],[141,"2026-07-27","2026-08-26",0,0],[142,"2026-07-27","2026-08-26",0,1],[143,"2026-07-28","2026-08-27",5,0],[144,"2026-07-28","2026-08-27",5,0],[145,"2026-07-28","2026-08-27",9,0],[146,"2026-07-29","2026-08-28",2,0],[147,"2026-07-29","2026-08-28",8,0],[148,"2026-08-01","2026-08-31",4,0],[149,"2026-08-02","2026-09-01",2,0],[150,"2026-08-03","2026-09-02",0,0],[151,"2026-08-03","2026-09-02",1,0],[152,"2026-08-03","2026-09-02",2,0],[153,"2026-08-05","2026-09-04",0,0],[154,"2026-08-05","2026-09-04",7,0],[155,"2026-08-05","2026-09-04",8,0],[156,"2026-08-07","2026-09-06",1,0],[157,"2026-08-07","2026-09-06",2,0],[158,"2026-08-08","2026-09-07",5,0],[159,"2026-08-11","2026-09-10",0,0],[160,"2026-08-11","2026-09-10",7,0],[161,"2026-08-12","2026-09-11",1,0],[162,"2026-08-14","2026-09-13",5,0],[163,"2026-08-15","2026-09-14",2,0],[164,"2026-08-17","2026-09-16",3,0],[165,"2026-08-17","2026-09-16",6,0],[166,"2026-08-19","2026-09-18",4,0],[167,"2026-08-19","2026-09-18",8,0],[168,"2026-08-20","2026-09-19",1,0],[169,"2026-08-21","2026-09-20",5,0],[170,"2026-08-22","2026-09-21",3,0],[171,"2026-08-22","2026-09-21",6,0],[172,"2026-08-22","2026-10-21",6,1],[173,"2026-08-22","2026-09-21",8,0],[174,"2026-08-22","2026-09-21",9,0],[175,"2026-08-23","2026-09-22",3,0],[176,"2026-08-24","2026-09-23",0,0],[177,"2026-08-24","2026-09-23",0,0],[178,"2026-08-24","2026-09-23",4,0],[179,"2026-08-24","2026-10-23",4,1],[180,"2026-08-24","2026-09-23",9,0],[181,"2026-08-26","2026-10-25",4,1],[182,"2026-08-26","2026-09-25",6,0],[183,"2026-08-27","2026-10-11",6,1],[184,"2026-08-28","2026-09-27",1,0],[185,"2026-08-28","2026-10-12",5,1],[186,"2026-08-28","2026-09-27",7,0],[187,"2026-08-28","2026-09-27",9,0],[188,"2026-08-29","2026-09-28",2,1],[189,"2026-08-30","2026-10-14",7,1],[190,"2026-09-01","2026-10-01",0,0],[191,"2026-09-01","2026-10-01",0,0],[192,"2026-09-01","2026-10-01",9,0],[193,"2026-09-02","2026-10-02",1,0],[194,"2026-09-02","2026-10-02",3,0],[195,"2026-09-02","2026-10-02",4,0],[196,"2026-09-03","2026-10-03",0,0],[197,"2026-09-03","2026-10-03",1,0],[198,"2026-09-03","2026-10-03",2,0],[199,"2026-09-03","2026-10-03",9,0],[200,"2026-09-05","2026-10-05",0,0],[201,"2026-09-05","2026-10-05",6,0],[202,"2026-09-06","2026-10-06",9,0],[203,"2026-09-07","2026-10-07",1,0],[204,"2026-09-07","2026-10-07",5,0],[205,"2026-09-08","2026-10-08",2,0],[206,"2026-09-08","2026-10-08",3,0],[207,"2026-09-08","2026-10-08",4,0],[208,"2026-09-08","2026-10-08",8,0],[209,"2026-09-09","2026-10-09",5,0],[210,"2026-09-10","2026-10-10",0,0],[211,"2026-09-10","2026-10-10",1,1],[212,"2026-09-11","2026-10-11",3,0],[213,"2026-09-12","2026-10-12",2,0],[214,"2026-09-12","2026-10-12",5,1],[215,"2026-09-13","2026-10-13",8,0],[216,"2026-09-14","2026-10-14",4,0],[217,"2026-09-15","2026-10-15",7,1],[218,"2026-09-16","2026-10-16",5,0],[219,"2026-09-16","2026-10-16",7,0],[220,"2026-09-17","2026-10-17",0,0],[221,"2026-09-18","2026-10-18",6,0],[222,"2026-09-19","2026-10-19",0,0],[223,"2026-09-20","2026-10-20",8,0],[224,"2026-09-21","2026-10-21",7,0],[225,"2026-09-21","2026-10-21",7,0],[226,"2026-09-22","2026-10-22",0,0],[227,"2026-09-22","2026-10-22",2,0],[228,"2026-09-24","2026-10-24",0,0],[229,"2026-09-24","2026-10-24",1,0],[230,"2026-09-25","2026-10-25",6,0]]},"fact_invoice_line":{"c":["inv","item","region","qty","amount","cost"],"r":[[1,1,3,1,37783,0],[2,3,0,1,7515,5936],[3,3,0,1,12766,10084],[4,1,1,1,29334,0],[5,2,0,1,40795,0],[6,0,2,15,124929,0],[7,1,1,1,12097,0],[8,3,1,1,10703,8454],[9,3,2,1,5503,4347],[10,1,0,1,55991,0],[11,3,2,5,53691,42412],[12,1,0,1,74224,0],[13,1,0,1,16645,0],[14,2,1,1,25530,0],[15,0,2,18,143248,0],[16,3,2,1,5937,4690],[17,1,2,1,27550,0],[18,2,1,1,8040,0],[19,3,1,1,14565,11505],[20,0,0,11,87317,0],[21,0,0,12,119970,0],[22,2,0,1,23908,0],[23,0,1,9,85956,0],[24,1,2,1,23404,0],[25,2,0,2,73783,0],[26,0,3,8,72155,0],[27,2,1,1,17760,0],[28,1,3,1,33261,0],[29,1,0,1,19785,0],[30,2,3,1,11898,0],[31,3,1,2,24707,19517],[32,2,3,1,10027,0],[33,3,0,1,13666,10795],[34,2,1,1,15390,0],[35,1,1,1,50071,0],[36,2,2,1,26299,0],[37,3,3,1,14322,11313],[38,0,3,12,113019,0],[39,3,3,1,11609,8407],[40,2,2,1,26055,0],[41,3,1,1,9483,6867],[42,3,3,1,6845,4957],[43,2,0,1,19286,0],[44,3,2,1,9157,6631],[45,2,1,2,64316,0],[46,3,2,1,9712,7033],[47,1,1,1,27441,0],[48,0,0,10,95727,0],[49,0,2,11,95533,0],[50,3,1,1,13935,10091],[51,0,1,7,69998,0],[52,2,0,1,10100,0],[53,2,0,1,16640,0],[54,2,2,1,53212,0],[55,1,3,1,37213,0],[56,1,2,1,36462,0],[57,1,0,1,23486,0],[58,1,0,1,19342,0],[59,3,3,1,5015,3632],[60,1,0,1,67803,0],[61,2,3,1,27540,0],[62,2,0,1,13774,0],[63,2,1,1,24894,0],[64,0,0,15,131070,0],[65,3,2,5,58394,42287],[66,1,3,1,24186,0],[67,1,0,1,113120,0],[68,1,1,1,32838,0],[69,3,1,1,10120,7328],[70,0,1,18,147225,0],[71,3,3,2,22360,16192],[72,1,1,1,17643,0],[73,2,1,1,23857,0],[74,1,1,1,23048,0],[75,2,0,1,12950,0],[76,3,3,1,14232,10886],[77,0,1,13,111291,0],[78,2,0,1,21768,0],[79,1,0,1,38668,0],[80,1,0,1,35029,0],[81,3,3,2,22811,17449],[82,3,2,1,8475,6483],[83,0,0,8,69009,0],[84,3,1,1,10870,8315],[85,1,1,1,27063,0],[86,3,0,1,6960,5324],[87,3,3,1,8839,6761],[88,2,0,1,21430,0],[89,1,2,1,18229,0],[90,1,0,1,56900,0],[91,0,0,11,103756,0],[92,2,0,1,25573,0],[93,2,2,1,29633,0],[94,0,2,6,58772,0],[95,2,3,3,93971,0],[96,1,2,1,22596,0],[97,2,3,1,17037,0],[98,3,0,4,46046,35222],[99,1,3,1,55482,0],[100,0,3,37,300000,0],[101,2,0,1,31293,0],[102,1,2,1,47300,0],[103,2,0,1,21109,0],[104,3,1,1,16181,12377],[105,1,3,1,47354,0],[106,3,3,1,8516,6514],[107,3,1,1,8448,6462],[108,1,1,1,22714,0],[109,1,3,1,66776,0],[110,2,0,1,18701,0],[111,1,0,1,36315,0],[112,3,0,1,14940,11698],[113,2,3,1,25000,0],[114,2,0,1,14263,0],[115,1,2,1,25239,0],[116,3,1,1,9941,7784],[117,3,3,1,10684,8366],[118,0,2,19,158624,0],[119,0,1,6,55577,0],[120,2,1,1,14170,0],[121,2,0,1,29075,0],[122,1,1,1,15758,0],[123,0,2,17,133962,0],[124,1,3,1,16671,0],[125,1,1,1,78383,0],[126,2,0,1,43013,0],[127,3,1,1,5581,4370],[128,2,0,1,20407,0],[129,1,3,1,20011,0],[130,2,0,1,12774,0],[131,0,3,9,87912,0],[132,3,0,2,21262,16648],[133,2,0,1,17877,0],[134,0,1,9,85258,0],[135,1,0,1,17717,0],[136,2,0,1,28128,0],[137,3,0,1,4927,3858],[138,3,3,1,15920,12465],[139,3,1,4,43589,34130],[140,1,1,1,13303,0],[141,2,0,2,65880,0],[142,1,0,2,318750,0],[143,2,1,1,17518,0],[144,3,3,1,8182,6406],[145,1,3,1,7669,0],[146,3,0,1,15873,12428],[147,1,1,1,12675,0],[148,3,2,1,6548,4572],[149,2,1,1,5707,0],[150,3,2,2,20848,14556],[151,0,3,9,79136,0],[152,1,3,1,9117,0],[153,0,0,12,99731,0],[154,2,0,1,3272,0],[155,1,1,1,5252,0],[156,2,2,1,11115,0],[157,3,0,1,7528,5256],[158,2,1,1,4745,0],[159,1,3,1,27972,0],[160,1,2,1,5350,0],[161,1,1,1,18883,0],[162,3,3,1,4318,3015],[163,0,3,7,66926,0],[164,1,1,1,3539,0],[165,2,1,1,6857,0],[166,2,2,1,5239,0],[167,3,2,1,3429,2394],[168,3,1,1,9012,6292],[169,1,2,1,5975,0],[170,2,3,1,3077,0],[171,3,0,1,4966,3467],[172,1,0,1,143000,0],[173,2,2,1,3750,0],[174,2,3,1,1979,0],[175,3,0,1,3067,2141],[176,0,3,14,112348,0],[177,2,3,1,20220,0],[178,1,0,1,7055,0],[179,1,1,1,221000,0],[180,1,2,1,4097,0],[181,3,0,8,98000,68421],[182,1,1,1,8938,0],[183,2,0,4,168000,0],[184,0,2,9,81986,0],[185,1,0,1,156000,0],[186,3,0,1,4270,2981],[187,3,0,1,3751,2619],[188,2,0,1,51995,0],[189,2,1,3,124830,0],[190,0,0,16,131461,0],[191,2,1,2,74384,0],[192,2,0,1,1398,0],[193,2,3,1,4653,0],[194,1,0,1,1508,0],[195,2,0,1,3336,0],[196,1,2,1,121240,0],[197,3,2,2,19168,14956],[198,1,2,1,3797,0],[199,3,1,1,3928,3065],[200,3,2,7,78750,61447],[201,1,3,1,3132,0],[202,1,1,1,1714,0],[203,1,2,1,6957,0],[204,2,3,1,1957,0],[205,3,1,1,8889,6936],[206,2,2,1,1507,0],[207,3,2,1,9446,7371],[208,3,0,1,7377,5756],[209,1,2,1,2818,0],[210,0,1,15,124724,0],[211,0,0,21,199500,0],[212,3,0,1,5047,3938],[213,0,3,12,119500,0],[214,2,3,3,135000,0],[215,2,3,1,2086,0],[216,1,0,1,4185,0],[217,1,0,1,76000,0],[218,3,2,1,11004,8586],[219,1,0,1,2501,0],[220,1,1,1,100364,0],[221,2,1,1,3213,0],[222,1,1,1,158396,0],[223,1,1,1,2460,0],[224,2,2,1,2044,0],[225,3,3,1,7044,5496],[226,2,0,2,85616,0],[227,2,1,1,4806,0],[228,0,2,19,156315,0],[229,0,2,1,10500,0],[230,3,0,1,9547,7449]]},"fact_payment":{"c":["inv","date","amount"],"r":[[0,"2026-04-08",1284502],[0,"2026-05-06",101124],[1,"2026-05-07",45339],[2,"2026-04-16",9018],[3,"2026-04-28",15319],[4,"2026-04-17",35200],[5,"2026-05-27",48954],[6,"2026-06-21",124929],[7,"2026-06-25",14516],[8,"2026-04-30",12843],[9,"2026-05-28",6603],[10,"2026-06-21",55991],[11,"2026-06-04",53691],[12,"2026-06-25",74224],[13,"2026-04-30",19974],[14,"2026-05-10",30636],[15,"2026-05-31",143248],[16,"2026-05-04",7124],[17,"2026-04-16",33060],[18,"2026-04-23",9648],[19,"2026-05-10",17478],[20,"2026-06-06",87317],[21,"2026-05-11",143964],[22,"2026-04-23",28689],[23,"2026-05-28",103147],[24,"2026-05-25",28084],[25,"2026-06-14",73783],[26,"2026-05-31",86586],[27,"2026-04-26",21312],[28,"2026-05-31",39913],[29,"2026-05-20",23742],[30,"2026-05-30",14277],[31,"2026-06-29",29648],[32,"2026-05-20",12032],[33,"2026-05-20",16399],[34,"2026-05-01",18468],[35,"2026-06-20",60085],[36,"2026-05-16",31558],[37,"2026-05-12",17186],[38,"2026-05-27",135622],[39,"2026-06-14",13930],[40,"2026-05-21",31266],[41,"2026-06-25",11379],[42,"2026-07-15",8214],[43,"2026-05-18",23143],[44,"2026-05-17",10988],[45,"2026-07-22",64316],[46,"2026-05-18",11654],[47,"2026-05-28",32929],[48,"2026-05-20",114872],[49,"2026-06-29",95533],[50,"2026-05-25",16722],[51,"2026-06-30",83997],[52,"2026-05-28",12120],[53,"2026-06-07",19968],[54,"2026-07-22",63854],[55,"2026-05-23",44655],[56,"2026-05-29",43754],[57,"2026-05-19",28183],[58,"2026-06-02",23210],[59,"2026-05-31",6018],[60,"2026-06-30",81363],[61,"2026-06-16",33048],[62,"2026-05-29",16528],[63,"2026-07-24",29872],[64,"2026-07-22",131070],[65,"2026-08-06",58394],[66,"2026-05-26",29023],[67,"2026-07-29",113120],[68,"2026-06-28",39405],[69,"2026-05-28",12144],[70,"2026-07-20",147225],[71,"2026-07-23",26832],[72,"2026-06-14",21171],[73,"2026-06-16",28628],[74,"2026-06-13",27657],[75,"2026-06-29",15540],[76,"2026-06-30",17078],[77,"2026-08-27",111291],[78,"2026-06-11",26121],[79,"2026-06-28",46401],[80,"2026-06-29",42034],[81,"2026-08-16",27373],[82,"2026-06-26",10170],[83,"2026-07-25",69009],[84,"2026-06-29",13044],[86,"2026-06-09",8352],[87,"2026-07-29",10606],[88,"2026-06-24",25716],[89,"2026-06-17",21874],[90,"2026-08-13",68280],[91,"2026-07-31",124507],[92,"2026-06-20",30687],[93,"2026-06-27",35559],[94,"2026-06-25",70526],[95,"2026-08-11",93971],[96,"2026-07-02",27115],[97,"2026-07-09",20444],[98,"2026-08-24",46046],[99,"2026-08-25",55482],[101,"2026-07-23",37551],[102,"2026-06-29",56760],[103,"2026-06-22",25330],[104,"2026-06-22",19417],[105,"2026-07-19",56824],[106,"2026-06-25",10219],[107,"2026-06-27",10137],[108,"2026-06-30",27256],[109,"2026-07-21",66776],[110,"2026-07-21",22441],[111,"2026-08-29",43578],[112,"2026-07-06",17928],[114,"2026-07-23",17115],[115,"2026-07-28",30286],[116,"2026-07-28",11929],[117,"2026-07-10",12820],[118,"2026-08-30",158624],[119,"2026-07-31",66692],[120,"2026-07-19",17004],[121,"2026-07-23",34890],[122,"2026-07-17",18909],[123,"2026-08-19",133962],[124,"2026-07-31",20005],[125,"2026-08-28",78383],[126,"2026-07-27",51615],[127,"2026-07-28",6697],[128,"2026-07-19",24488],[129,"2026-07-18",24013],[130,"2026-07-28",15328],[131,"2026-08-29",105494],[132,"2026-09-29",25514],[133,"2026-07-28",21452],[134,"2026-08-30",102309],[135,"2026-07-27",21260],[136,"2026-07-25",33753],[137,"2026-07-28",5912],[138,"2026-07-27",19104],[139,"2026-09-28",43589],[140,"2026-08-19",15963],[141,"2026-08-26",65880],[143,"2026-07-29",21021],[144,"2026-08-09",9818],[145,"2026-07-29",9202],[146,"2026-08-30",19047],[147,"2026-07-30",15210],[148,"2026-08-20",7857],[149,"2026-08-27",6848],[150,"2026-09-27",20848],[151,"2026-08-30",94963],[152,"2026-08-25",10940],[153,"2026-08-30",99731],[154,"2026-08-29",3926],[155,"2026-08-26",6302],[156,"2026-09-20",13338],[157,"2026-08-30",9033],[158,"2026-08-14",5694],[159,"2026-09-30",27972],[160,"2026-08-28",6420],[161,"2026-08-29",22659],[162,"2026-08-15",5181],[163,"2026-08-28",80311],[164,"2026-08-30",4246],[165,"2026-08-31",8228],[166,"2026-08-23",6286],[167,"2026-08-21",4114],[168,"2026-08-26",10814],[169,"2026-08-31",7170],[170,"2026-08-31",3692],[171,"2026-08-23",5959],[173,"2026-08-30",4500],[174,"2026-08-27",2374],[175,"2026-08-31",3680],[176,"2026-09-22",112348],[177,"2026-09-30",20220],[178,"2026-08-25",8466],[180,"2026-08-31",4916],[182,"2026-08-27",10725],[184,"2026-09-29",98383],[186,"2026-08-31",5124],[187,"2026-08-29",4501],[190,"2026-09-30",131461],[191,"2026-09-25",74384],[192,"2026-09-25",1677],[193,"2026-09-30",5583],[194,"2026-09-20",1809],[195,"2026-09-11",4003],[196,"2026-09-30",121240],[197,"2026-09-29",23001],[198,"2026-09-21",4556],[199,"2026-09-29",4713],[200,"2026-09-26",78750],[201,"2026-09-12",3758],[202,"2026-09-21",2056],[203,"2026-09-12",8348],[204,"2026-09-30",2348],[205,"2026-09-20",10666],[206,"2026-09-24",1808],[207,"2026-09-14",11335],[208,"2026-09-29",8852],[209,"2026-09-16",3381],[210,"2026-09-30",124724],[212,"2026-09-29",6056],[213,"2026-09-30",143400],[215,"2026-09-20",2503],[216,"2026-09-21",5022],[218,"2026-09-29",13204],[219,"2026-09-19",3001],[220,"2026-09-30",100364],[221,"2026-09-29",3855],[222,"2026-09-30",158396],[223,"2026-09-26",2952],[224,"2026-09-25",2452],[225,"2026-09-24",8452],[226,"2026-09-30",85616],[227,"2026-09-30",5767],[228,"2026-09-30",156315],[229,"2026-09-30",12600],[230,"2026-09-29",11456]]},"fact_other_rev":{"c":["date","region","amount"],"r":[["2026-04-18",2,19952],["2026-04-04",1,31523],["2026-05-20",0,24758],["2026-05-19",3,22882],["2026-06-12",0,61695],["2026-07-18",3,33529],["2026-07-12",1,32723],["2026-08-03",3,41382],["2026-09-11",3,62499]]},"fact_bill":{"c":["bill","date","due","supplier","paid"],"r":[[1,"2026-04-01","2026-05-01",15,"2026-05-04"],[2,"2026-04-01","2026-05-01",15,"2026-04-09"],[3,"2026-04-01","2026-05-01",15,"2026-05-06"],[4,"2026-04-01","2026-05-01",15,"2026-04-25"],[5,"2026-04-01","2026-05-01",16,"2026-04-24"],[6,"2026-04-02","2026-05-02",13,"2026-04-29"],[7,"2026-04-03","2026-05-03",13,"2026-04-20"],[8,"2026-04-05","2026-05-05",2,"2026-05-07"],[9,"2026-04-05","2026-05-05",13,"2026-05-12"],[10,"2026-04-06","2026-05-06",9,"2026-04-26"],[11,"2026-04-09","2026-05-09",3,"2026-05-17"],[12,"2026-04-09","2026-05-09",6,"2026-05-02"],[13,"2026-04-10","2026-05-10",16,"2026-04-17"],[14,"2026-04-14","2026-05-14",16,"2026-05-20"],[15,"2026-04-15","2026-05-15",5,"2026-05-21"],[16,"2026-04-16","2026-05-16",14,"2026-05-15"],[17,"2026-04-17","2026-05-17",16,"2026-05-22"],[18,"2026-04-21","2026-05-21",7,"2026-05-15"],[19,"2026-04-23","2026-05-23",10,"2026-05-06"],[20,"2026-04-23","2026-05-23",14,"2026-05-25"],[21,"2026-04-23","2026-05-23",14,"2026-05-01"],[22,"2026-04-24","2026-05-24",14,"2026-05-27"],[23,"2026-04-27","2026-05-27",13,"2026-05-14"],[24,"2026-04-28","2026-05-28",6,"2026-05-20"],[25,"2026-05-01","2026-05-31",15,"2026-06-07"],[26,"2026-05-01","2026-05-31",15,"2026-06-04"],[27,"2026-05-01","2026-05-31",15,"2026-05-26"],[28,"2026-05-01","2026-05-31",15,"2026-05-08"],[29,"2026-05-02","2026-06-01",1,"2026-05-23"],[30,"2026-05-02","2026-06-01",8,"2026-05-15"],[31,"2026-05-04","2026-06-03",14,"2026-06-07"],[32,"2026-05-05","2026-06-04",14,"2026-05-12"],[33,"2026-05-07","2026-06-06",14,"2026-06-05"],[34,"2026-05-09","2026-06-08",16,"2026-05-30"],[35,"2026-05-09","2026-06-08",16,"2026-05-30"],[36,"2026-05-10","2026-06-09",13,"2026-06-18"],[37,"2026-05-13","2026-06-12",9,"2026-06-02"],[38,"2026-05-14","2026-06-13",10,"2026-05-25"],[39,"2026-05-14","2026-06-13",16,"2026-05-24"],[40,"2026-05-16","2026-06-15",14,"2026-05-23"],[41,"2026-05-16","2026-06-15",16,"2026-05-25"],[42,"2026-05-17","2026-06-16",0,"2026-06-25"],[43,"2026-05-17","2026-06-16",5,"2026-06-09"],[44,"2026-05-17","2026-06-16",5,"2026-06-20"],[45,"2026-05-17","2026-06-16",9,"2026-05-29"],[46,"2026-05-26","2026-06-25",14,"2026-06-20"],[47,"2026-06-01","2026-07-01",7,"2026-06-10"],[48,"2026-06-01","2026-07-01",14,"2026-06-10"],[49,"2026-06-01","2026-07-01",15,"2026-07-04"],[50,"2026-06-01","2026-07-01",15,"2026-07-10"],[51,"2026-06-01","2026-07-01",15,"2026-06-22"],[52,"2026-06-01","2026-07-01",15,"2026-06-16"],[53,"2026-06-02","2026-07-02",16,"2026-06-22"],[54,"2026-06-03","2026-07-03",7,"2026-06-16"],[55,"2026-06-03","2026-07-03",8,"2026-06-26"],[56,"2026-06-03","2026-07-03",16,"2026-06-23"],[57,"2026-06-05","2026-07-05",17,"2026-06-22"],[58,"2026-06-06","2026-07-06",14,"2026-06-15"],[59,"2026-06-07","2026-07-07",5,"2026-06-26"],[60,"2026-06-08","2026-07-08",13,"2026-06-17"],[61,"2026-06-11","2026-07-11",1,"2026-07-12"],[62,"2026-06-12","2026-07-12",9,"2026-06-25"],[63,"2026-06-12","2026-07-12",13,"2026-07-04"],[64,"2026-06-12","2026-07-12",16,"2026-07-04"],[65,"2026-06-16","2026-07-16",13,"2026-06-24"],[66,"2026-06-19","2026-07-19",4,"2026-07-08"],[67,"2026-06-20","2026-07-20",14,"2026-06-29"],[68,"2026-06-24","2026-07-24",2,"2026-07-05"],[69,"2026-06-24","2026-07-24",13,"2026-08-02"],[70,"2026-06-27","2026-07-27",13,"2026-07-14"],[71,"2026-07-01","2026-07-31",15,"2026-07-16"],[72,"2026-07-01","2026-07-31",15,"2026-07-31"],[73,"2026-07-01","2026-07-31",15,"2026-07-16"],[74,"2026-07-01","2026-07-31",15,"2026-08-03"],[75,"2026-07-03","2026-08-02",17,"2026-07-30"],[76,"2026-07-06","2026-08-05",1,"2026-08-08"],[77,"2026-07-06","2026-08-05",9,"2026-07-15"],[78,"2026-07-07","2026-08-06",1,"2026-08-01"],[79,"2026-07-07","2026-08-06",13,"2026-08-10"],[80,"2026-07-08","2026-08-07",14,"2026-08-08"],[81,"2026-07-09","2026-08-08",2,"2026-08-01"],[82,"2026-07-11","2026-08-10",17,"2026-07-31"],[83,"2026-07-12","2026-08-11",17,"2026-07-28"],[84,"2026-07-14","2026-08-13",1,"2026-08-08"],[85,"2026-07-19","2026-08-18",13,"2026-08-14"],[86,"2026-07-22","2026-08-21",4,"2026-08-26"],[87,"2026-07-24","2026-08-23",13,"2026-08-13"],[88,"2026-07-25","2026-08-24",10,"2026-08-25"],[89,"2026-07-25","2026-08-24",14,"2026-08-06"],[90,"2026-07-25","2026-08-24",17,"2026-08-06"],[91,"2026-07-26","2026-08-25",14,"2026-08-02"],[92,"2026-07-27","2026-08-26",12,"2026-08-30"],[93,"2026-08-01","2026-08-31",7,"2026-09-07"],[94,"2026-08-01","2026-08-31",15,"2026-08-10"],[95,"2026-08-01","2026-08-31",15,"2026-08-12"],[96,"2026-08-01","2026-08-31",15,"2026-08-13"],[97,"2026-08-01","2026-08-31",15,"2026-08-13"],[98,"2026-08-03","2026-09-02",0,""],[99,"2026-08-04","2026-09-03",17,"2026-08-26"],[100,"2026-08-05","2026-09-04",14,"2026-09-02"],[101,"2026-08-06","2026-09-05",13,"2026-08-31"],[102,"2026-08-08","2026-09-07",17,"2026-08-19"],[103,"2026-08-09","2026-09-08",13,"2026-09-11"],[104,"2026-08-12","2026-09-11",4,""],[105,"2026-08-13","2026-09-12",16,"2026-09-21"],[106,"2026-08-15","2026-09-14",10,"2026-09-10"],[107,"2026-08-18","2026-09-17",2,""],[108,"2026-08-18","2026-09-17",13,"2026-09-21"],[109,"2026-08-19","2026-09-18",0,"2026-09-26"],[110,"2026-08-20","2026-09-19",13,"2026-09-15"],[111,"2026-08-21","2026-09-20",13,"2026-09-17"],[112,"2026-08-22","2026-09-21",13,"2026-09-27"],[113,"2026-08-22","2026-09-21",14,"2026-09-15"],[114,"2026-08-28","2026-09-27",3,""],[115,"2026-08-28","2026-09-27",5,"2026-09-07"],[116,"2026-08-29","2026-09-28",16,"2026-09-21"],[117,"2026-09-01","2026-10-01",15,"2026-09-30"],[118,"2026-09-01","2026-10-01",15,"2026-09-08"],[119,"2026-09-01","2026-10-01",15,"2026-09-18"],[120,"2026-09-01","2026-10-01",15,"2026-09-30"],[121,"2026-09-02","2026-10-02",13,"2026-09-24"],[122,"2026-09-05","2026-10-05",14,"2026-09-25"],[123,"2026-09-05","2026-10-05",16,"2026-09-30"],[124,"2026-09-07","2026-10-07",13,"2026-09-30"],[125,"2026-09-07","2026-10-07",14,"2026-09-21"],[126,"2026-09-09","2026-10-09",4,"2026-09-18"],[127,"2026-09-11","2026-10-11",14,"2026-09-30"],[128,"2026-09-12","2026-10-12",2,""],[129,"2026-09-12","2026-10-12",3,"2026-09-23"],[130,"2026-09-14","2026-10-14",3,""],[131,"2026-09-15","2026-10-15",4,""],[132,"2026-09-15","2026-10-15",11,"2026-09-30"],[133,"2026-09-17","2026-10-17",5,""],[134,"2026-09-18","2026-10-18",6,""],[135,"2026-09-18","2026-10-18",17,"2026-09-30"],[136,"2026-09-19","2026-10-19",2,"2026-09-30"],[137,"2026-09-19","2026-10-19",2,"2026-09-30"],[138,"2026-09-19","2026-10-19",14,"2026-09-30"],[139,"2026-09-20","2026-10-20",7,""],[140,"2026-09-20","2026-10-20",14,"2026-09-30"],[141,"2026-09-20","2026-10-20",14,"2026-09-30"],[142,"2026-09-22","2026-10-22",8,""],[143,"2026-09-23","2026-10-23",8,"2026-09-30"],[144,"2026-09-23","2026-10-23",9,""],[145,"2026-09-24","2026-10-24",17,"2026-09-30"],[146,"2026-09-25","2026-10-25",10,""],[147,"2026-09-25","2026-10-25",17,"2026-09-30"],[148,"2026-09-26","2026-10-26",11,""],[149,"2026-09-28","2026-10-28",1,""],[150,"2026-09-29","2026-10-29",12,""]]},"fact_bill_line":{"c":["bill","account","region","amount"],"r":[[1,6,3,1579],[2,6,0,4923],[3,6,2,6233],[4,6,1,7265],[5,7,3,1185],[6,2,3,6691],[7,2,2,18780],[8,3,1,88231],[9,2,1,26003],[10,3,0,97461],[11,3,2,106005],[12,3,3,67829],[13,7,2,6046],[14,7,0,4319],[15,3,2,66579],[16,2,3,4622],[17,7,1,5712],[18,3,1,75621],[19,3,0,63735],[20,2,1,13473],[21,2,0,14171],[22,2,0,12644],[23,2,2,32669],[24,3,0,43194],[25,6,2,4125],[26,6,3,4127],[27,6,1,4621],[28,6,0,7127],[29,3,0,93423],[30,3,1,101064],[31,2,1,16274],[32,2,3,17526],[33,2,2,31353],[34,7,2,3772],[35,7,1,4491],[36,2,3,15662],[37,3,2,55379],[38,3,0,88013],[39,7,0,3914],[40,2,1,8012],[41,7,3,2535],[42,3,1,74402],[43,3,2,75052],[44,3,3,83287],[45,3,0,58528],[46,2,2,24598],[47,3,0,65384],[48,2,3,26420],[49,6,1,2353],[50,6,2,2669],[51,6,3,7241],[52,6,0,7737],[53,7,0,4189],[54,3,0,120961],[55,3,0,75824],[56,7,3,4758],[57,7,1,968],[58,2,2,3048],[59,3,3,67045],[60,2,0,28097],[61,3,3,65962],[62,3,3,88925],[63,2,1,10954],[64,7,2,1106],[65,2,0,12449],[66,3,1,75264],[67,2,3,15190],[68,3,2,83476],[69,2,1,16200],[70,2,2,3435],[71,6,3,2690],[72,6,2,5177],[73,6,0,6014],[74,6,1,6119],[75,7,0,7330],[76,3,0,100119],[77,3,3,88802],[78,3,0,108811],[79,2,0,23017],[80,2,1,22475],[81,3,2,82902],[82,7,2,4162],[83,7,3,2698],[84,3,1,56417],[85,2,3,15156],[86,3,0,78083],[87,2,1,23809],[88,3,1,87261],[89,2,3,12081],[90,7,1,3247],[91,2,0,21615],[92,3,2,46030],[93,3,0,28866],[94,6,2,1860],[95,6,1,2110],[96,6,3,6984],[97,6,0,9046],[98,3,1,450000],[99,7,3,4099],[100,2,0,37469],[101,2,3,1876],[102,7,2,1695],[103,2,2,11153],[104,3,1,30000],[105,7,0,8016],[106,3,1,7067],[107,3,3,80000],[108,2,1,2636],[109,3,2,6410],[110,2,3,1139],[111,2,1,3656],[112,2,2,10369],[113,2,0,47416],[114,3,2,49848],[115,3,3,13627],[116,7,1,1813],[117,6,0,545],[118,6,2,4536],[119,6,1,5673],[120,6,3,9246],[121,2,2,40606],[122,2,3,3191],[123,7,3,5829],[124,2,3,2305],[125,2,0,9098],[126,3,3,76915],[127,2,0,8045],[128,3,0,32000],[129,3,0,18492],[130,3,3,24500],[131,3,2,19811],[132,3,1,99856],[133,3,1,18000],[134,3,0,15200],[135,7,0,408],[136,3,1,71522],[137,3,2,82865],[138,2,1,5100],[139,3,3,14800],[140,2,1,4901],[141,2,2,51754],[142,3,2,12400],[143,3,3,56718],[144,3,1,11300],[145,7,2,3664],[146,3,0,10100],[147,7,1,6146],[148,3,3,9500],[149,3,0,120000],[150,3,2,10500]]},"fact_bank":{"c":["date","mi","dir","kind","amount"],"r":[["2026-04-30",0,"in","Customer receipts, incl. VAT",1469565],["2026-04-30",0,"in","Other revenue",51475],["2026-04-30",0,"out","Supplier bills, incl. VAT",170821],["2026-04-30",0,"out","Wages",172000],["2026-04-30",0,"out","Drawings and tax",1116316],["2026-04-30",0,"out","VAT paid to HMRC",28878],["2026-05-31",1,"in","Customer receipts, incl. VAT",1505483],["2026-05-31",1,"in","Other revenue",47640],["2026-05-31",1,"out","Supplier bills, incl. VAT",1230774],["2026-05-31",1,"out","Wages",174550],["2026-05-31",1,"out","Drawings and tax",189306],["2026-05-31",1,"in","VAT and timing",28877],["2026-06-30",2,"in","Customer receipts, incl. VAT",1565694],["2026-06-30",2,"in","Other revenue",61695],["2026-06-30",2,"out","Supplier bills, incl. VAT",1094994],["2026-06-30",2,"out","Wages",178000],["2026-06-30",2,"out","Drawings and tax",297216],["2026-06-30",2,"in","VAT and timing",7686],["2026-07-31",3,"in","Customer receipts, incl. VAT",1536409],["2026-07-31",3,"in","Other revenue",66252],["2026-07-31",3,"out","Supplier bills, incl. VAT",434510],["2026-07-31",3,"out","Wages",179525],["2026-07-31",3,"out","Drawings and tax",979463],["2026-07-31",3,"out","VAT paid to HMRC",32087],["2026-07-31",3,"in","VAT and timing",1359],["2026-08-31",4,"in","Customer receipts, incl. VAT",1648555],["2026-08-31",4,"in","Other revenue",41382],["2026-08-31",4,"out","Supplier bills, incl. VAT",877214],["2026-08-31",4,"out","Wages",182000],["2026-08-31",4,"out","Drawings and tax",584026],["2026-08-31",4,"in","VAT and timing",1123],["2026-09-30",5,"in","Customer receipts, incl. VAT",1712076],["2026-09-30",5,"in","Other revenue",62499],["2026-09-30",5,"out","Supplier bills, incl. VAT",896462],["2026-09-30",5,"out","Wages",185000],["2026-09-30",5,"out","Drawings and tax",627593],["2026-09-30",5,"in","VAT and timing",-39045]]},"fact_budget":{"c":["mi","account","amount"],"r":[[0,0,1440000],[0,1,60000],[0,2,130000],[0,3,620000],[0,4,170000],[0,5,44000],[0,6,20000],[0,7,26000],[1,0,1460000],[1,1,60000],[1,2,130000],[1,3,628000],[1,4,172000],[1,5,44000],[1,6,20000],[1,7,26000],[2,0,1500000],[2,1,60000],[2,2,135000],[2,3,634000],[2,4,176000],[2,5,44000],[2,6,20000],[2,7,26000],[3,0,1540000],[3,1,60000],[3,2,135000],[3,3,637000],[3,4,178000],[3,5,44000],[3,6,20000],[3,7,26000],[4,0,1560000],[4,1,60000],[4,2,140000],[4,3,640000],[4,4,180000],[4,5,44000],[4,6,20000],[4,7,26000],[5,0,1590000],[5,1,60000],[5,2,140000],[5,3,650000],[5,4,180000],[5,5,44000],[5,6,20000],[5,7,26000]]},"fact_payroll":{"c":["mi","region","amount"],"r":[[0,0,66706],[0,1,37368],[0,2,46522],[0,3,21404],[1,0,63417],[1,1,45560],[1,2,34005],[1,3,31568],[2,0,65644],[2,1,26362],[2,2,18816],[2,3,67178],[3,0,75296],[3,1,42412],[3,2,35723],[3,3,26094],[4,0,82621],[4,1,44848],[4,2,14685],[4,3,39846],[5,0,52573],[5,1,51820],[5,2,43180],[5,3,37427]]},"fact_project_time":{"c":["mi","project","billed","cost"],"r":[[0,0,355494,71396],[0,1,158111,41246],[0,2,119970,24958],[1,0,373828,82889],[1,1,165725,33859],[1,2,113019,22892],[2,0,480300,103699],[2,1,103756,23719],[2,2,58772,14982],[3,0,292586,79271],[3,1,140835,39092],[3,2,87912,25257],[4,0,212079,61853],[4,1,161122,58033],[4,2,66926,25714],[5,0,412500,94000],[5,1,210000,38000],[5,2,119500,16000]]},"fact_asset_dep":{"c":["mi","asset","charge","nbv"],"r":[[0,0,30000,1230000],[0,1,10000,410000],[0,2,4000,404000],[1,0,30000,1200000],[1,1,10000,400000],[1,2,4000,400000],[2,0,30000,1170000],[2,1,10000,390000],[2,2,4000,396000],[3,0,30000,1140000],[3,1,10000,380000],[3,2,4000,392000],[4,0,30000,1110000],[4,1,10000,370000],[4,2,4000,388000],[5,0,30000,1080000],[5,1,10000,360000],[5,2,4000,384000]]},"fact_forecast":{"c":["label","low","base","high"],"r":[["Oct",445007,545007,645007],["Nov",394584,562584,730584],["Dec",340161,580161,820161]]},"meta2":{"opening":389440}};</script>
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+
+// ---------------------------------------------------------------- data
+const rows = t => { const x = DATA[t]; return x.r.map(r => { const o = {}; x.c.forEach((c, i) => { o[c] = r[i]; }); return o; }); };
+const MON = DATA.meta.months, ASAT = DATA.meta.asat;
+const MLONG = ['April', 'May', 'June', 'July', 'August', 'September'];
+const mi = d => +d.slice(5, 7) - 4;
+const dn = d => Date.UTC(+d.slice(0, 4), +d.slice(5, 7) - 1, +d.slice(8, 10)) / 864e5;
+const REG = rows('dim_region'), CUS = rows('dim_customer'), ITM = rows('dim_item'), ACC = rows('dim_account'), SUP = rows('dim_supplier'), PRJ = rows('dim_project'), AST = rows('dim_asset');
+const INV = new Map(rows('fact_invoice').map(r => [r.inv, r]));
+const PAYM = new Map(rows('fact_payment').map(r => [r.inv, r]));
+const L = rows('fact_invoice_line').map(l => {
+  const h = INV.get(l.inv), p = PAYM.get(l.inv);
+  return { inv: l.inv, d: h.date, mi: mi(h.date), c: h.customer, i: l.item, r: l.region, qty: l.qty, amt: l.amount, cost: l.cost, open: !!h.open,
+    days: p ? dn(p.date) - dn(h.date) : null, out: dn('2026-09-30') - dn(h.date), over: dn(ASAT) - dn(h.due) };
+});
+const BH = new Map(rows('fact_bill').map(r => [r.bill, r]));
+const B = rows('fact_bill_line').map(l => { const h = BH.get(l.bill); return { mi: mi(h.date), s: h.supplier, a: l.account, r: l.region, amt: l.amount }; });
+const OTH = rows('fact_other_rev').map(r => ({ mi: mi(r.date), region: r.region, amount: r.amount }));
+const PAYR = rows('fact_payroll'), BUD = rows('fact_budget'), BANK = rows('fact_bank'), PT = rows('fact_project_time'), DEP = rows('fact_asset_dep'), FC = rows('fact_forecast');
+const OPENING = DATA.meta2.opening;
+const closeAt = []; { let run = OPENING; for (let m = 0; m < 6; m++) { run += BANK.filter(b => b.mi === m).reduce((a, b) => a + (b.dir === 'in' ? b.amount : -b.amount), 0); closeAt[m] = run; } }
+
+// ---------------------------------------------------------------- state and filters
+const DEFAULT_PER = 5;
+const S = { tab: 'overview', per: DEFAULT_PER, reg: new Set(REG.map(r => r.id)), cus: new Set(), item: -1 };
+const inPer = m => S.per === 'fy' || m === S.per;
+const inCus = c => !S.cus.size || S.cus.has(c);
+const inItm = i => S.item < 0 || S.item === i;
+const ciActive = () => S.cus.size > 0 || S.item >= 0;
+const regActive = () => S.reg.size < REG.length;
+const pMonths = () => [0, 1, 2, 3, 4, 5].filter(inPer);
+const perLabel = () => S.per === 'fy' ? 'April to September 2026 (FYTD)' : MLONG[S.per] + ' 2026';
+const memo = new Map();
+const memoize = (k, f) => { if (!memo.has(k)) memo.set(k, f()); return memo.get(k); };
+
+function plm(m, ci) {
+  return memoize('pl' + m + ci, () => {
+    const full = !ci || !ciActive();
+    const o = { sales: 0, other: 0, cos: 0, am: 0, pay: 0, dep: 0, rent: 0, oth: 0 };
+    for (const l of L) if (l.mi === m && S.reg.has(l.r) && (!ci || (inCus(l.c) && inItm(l.i)))) { o.sales += l.amt; o.cos += l.cost; }
+    if (full) {
+      for (const x of OTH) if (x.mi === m && S.reg.has(x.region)) o.other += x.amount;
+      for (const b of B) if (b.mi === m && S.reg.has(b.r)) { if (b.a === 3) o.am += b.amt; else if (b.a === 6) o.rent += b.amt; else if (b.a === 7) o.oth += b.amt; }
+      for (const p of PAYR) if (p.mi === m && S.reg.has(p.region)) o.pay += p.amount;
+      for (const a of DEP) if (a.mi === m && S.reg.has(AST[a.asset].region)) o.dep += a.charge;
+    }
+    o.income = o.sales + o.other; o.gp = o.income - o.cos; o.ovh = o.am + o.pay + o.dep + o.rent + o.oth;
+    o.net = full ? o.gp - o.ovh : null; o.full = full;
+    return o;
+  });
+}
+const sumP = (f) => pMonths().reduce((a, m) => a + f(m), 0);
+
+// ---------------------------------------------------------------- formatting and colour
+const gbp = (p, d = 2) => (p < 0 ? '-' : '') + '£' + (Math.abs(p) / 100).toLocaleString('en-GB', { minimumFractionDigits: d, maximumFractionDigits: d });
+const sgn = p => (p > 0 ? '+' : p < 0 ? '-' : '') + gbp(Math.abs(p));
+const gbpK = p => { const a = Math.abs(p) / 100, s = p < 0 ? '-' : ''; return s + '£' + (a >= 1000 ? (a / 1000).toFixed(a >= 10000 ? 0 : 1) + 'k' : a.toFixed(0)); };
+const pct = (x, d = 1) => (x * 100).toFixed(d) + '%';
+const cv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const isDark = () => { const t = document.documentElement.dataset.theme; return t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches); };
+const SEQ_L = ['#cde2fb', '#9ec5f4', '#6da7ec', '#3987e5', '#256abf', '#184f95', '#0d366b'];
+const SEQ_D = ['#0d366b', '#184f95', '#256abf', '#3987e5', '#6da7ec', '#9ec5f4', '#cde2fb'];
+const seq = t => d3.interpolateRgbBasis(isDark() ? SEQ_D : SEQ_L)(Math.max(0, Math.min(1, t)));
+const DIV = { l: { n: '#f0efec', b: ['#b7d3f6', '#6da7ec', '#256abf'], r: ['#f5c4c1', '#e87472', '#b92d2d'] }, d: { n: '#383835', b: ['#184f95', '#3987e5', '#86b6ef'], r: ['#8a2c2c', '#e66767', '#f4a9a7'] } };
+const div = t => { const c = DIV[isDark() ? 'd' : 'l'], arm = t < 0 ? c.r : c.b; return d3.interpolateRgbBasis([c.n, ...arm])(Math.min(1, Math.abs(t))); };
+const textOn = f => { const c = d3.rgb(f); return (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b) / 255 > 0.6 ? '#0B0B0B' : '#FFFFFF'; };
+const slot = n => 'var(--s' + (n + 1) + ')';          // categorical slot, 0-based
+const slotHex = n => cv('--s' + (n + 1));
+const SHORT = ITM.map(i => i.name.split(' ')[0]);
+const fitText = (s, w, px = 5.8) => { const n = Math.max(0, Math.floor(w / px)); return s.length <= n ? s : n > 2 ? s.slice(0, n - 1) + '.' : ''; };
+
+// ---------------------------------------------------------------- tooltips
+const tipEl = $('#tip');
+function tipFill(title, rs) {
+  tipEl.textContent = '';
+  tipEl.append(el('div', 'tt', title));
+  rs.forEach(([k, v, c, dash]) => {
+    const r = el('div', 'tr'), kk = el('span', 'k');
+    if (c) { const i = el('i'); i.style.borderColor = c; if (dash) i.style.borderTopStyle = 'dashed'; kk.append(i); }
+    kk.append(document.createTextNode(k));
+    r.append(kk, el('b', null, v)); tipEl.append(r);
+  });
+}
+function tipAt(x, y) {
+  tipEl.classList.add('on');
+  const r = tipEl.getBoundingClientRect();
+  let l = x + 14, t = y + 14;
+  if (l + r.width > innerWidth - 8) l = x - r.width - 14;
+  if (t + r.height > innerHeight - 8) t = y - r.height - 14;
+  tipEl.style.left = Math.max(8, l) + 'px'; tipEl.style.top = Math.max(8, t) + 'px';
+}
+const hideTip = () => tipEl.classList.remove('on');
+function wire(sel, fn, focusable = true) {
+  const ev = (e, d) => { const [t, r] = fn(d); tipFill(t, r); tipAt(e.clientX, e.clientY); };
+  sel.on('pointermove', ev).on('pointerdown', ev).on('pointerleave', hideTip);
+  if (focusable) {
+    sel.attr('tabindex', 0).attr('role', 'img').attr('aria-label', d => { const [t, r] = fn(d); return t + ': ' + r.map(x => x[0] + ' ' + x[1]).join(', '); })
+      .on('focus', (e, d) => { const [t, r] = fn(d); tipFill(t, r); const b = e.currentTarget.getBoundingClientRect(); tipAt(b.left + b.width / 2, b.top + b.height / 2); })
+      .on('blur', hideTip);
+  }
+}
+
+// ---------------------------------------------------------------- chart scaffolding
+function svgIn(host, h, label) {
+  host.textContent = '';
+  const w = Math.max(240, Math.floor(host.clientWidth));
+  const svg = d3.select(host).append('svg').attr('width', w).attr('height', h).attr('viewBox', `0 0 ${w} ${h}`).attr('role', 'img').attr('aria-label', label);
+  return { svg, w };
+}
+function note(host, msg) { host.textContent = ''; host.append(el('p', 'note', msg)); }
+function yGrid(svg, y, w, m, fmt, n = 4) {
+  const t = y.ticks(n);
+  svg.append('g').selectAll('line').data(t).join('line').attr('x1', m.l).attr('x2', w - m.r).attr('y1', d => y(d)).attr('y2', d => y(d)).style('stroke', 'var(--grid)');
+  svg.append('g').selectAll('text').data(t).join('text').attr('x', m.l - 6).attr('y', d => y(d) + 4).attr('text-anchor', 'end').text(fmt);
+}
+function wrapText(sel, str, width, px = 6) {
+  const words = str.split(' '), lines = []; let cur = '';
+  words.forEach(wd => { if ((cur + ' ' + wd).trim().length * px > width && cur) { lines.push(cur); cur = wd; } else cur = (cur + ' ' + wd).trim(); });
+  lines.push(cur);
+  const x = sel.attr('x'); sel.text('');
+  lines.slice(0, 2).forEach((ln, i) => sel.append('tspan').attr('x', x).attr('dy', i ? 12 : 0).text(ln));
+  return lines.length;
+}
+const TBL = {};
+
+// ---------------------------------------------------------------- KPI tiles
+function spark(host, vals, sel, color) {
+  host.textContent = '';
+  const w = Math.max(80, host.clientWidth), h = 30;
+  const svg = d3.select(host).append('svg').attr('width', w).attr('height', h).attr('viewBox', `0 0 ${w} ${h}`).attr('role', 'img').attr('aria-label', 'Trend, April to September');
+  const ok = vals.map((v, i) => [i, v]).filter(p => p[1] != null);
+  const x = d3.scaleLinear([0, 5], [4, w - 4]), ext = d3.extent(ok, p => p[1]);
+  const y = d3.scaleLinear(ext[0] === ext[1] ? [ext[0] - 1, ext[1] + 1] : ext, [h - 5, 5]);
+  svg.append('path').attr('d', d3.line().x(p => x(p[0])).y(p => y(p[1]))(ok)).style('fill', 'none').style('stroke', color).attr('stroke-width', 2);
+  const hl = sel === 'fy' ? [] : ok.filter(p => p[0] === sel);
+  svg.selectAll('circle').data(sel === 'fy' ? [ok[ok.length - 1]] : hl).join('circle').attr('cx', p => x(p[0])).attr('cy', p => y(p[1])).attr('r', 4).style('fill', color).style('stroke', 'var(--panel)').attr('stroke-width', 2);
+}
+const SLICER_NAMES = { period: 'Period', region: 'Region', customer: 'Customer', item: 'Item' };
+function ignoredBy(scope) {
+  const act = []; if (regActive()) act.push('region'); if (S.cus.size) act.push('customer'); if (S.item >= 0) act.push('item');
+  return act.filter(a => !scope.includes(a)).map(a => SLICER_NAMES[a]);
+}
+const scopeText = (scope) => scope.length ? 'Respects ' + scope.map(s => SLICER_NAMES[s]).join(', ') : 'Fixed view, no slicers';
+function drawKpis() {
+  const host = $('#kpis'); host.textContent = '';
+  const sel = S.per, ms = pMonths(), prev = typeof sel === 'number' && sel > 0 ? sel - 1 : null;
+  const ci = m => plm(m, true), nf = m => plm(m, false);
+  const dtp = m => { const x = L.filter(l => l.days != null && (m == null ? inPer(l.mi) : l.mi === m) && S.reg.has(l.r) && inCus(l.c) && inItm(l.i)); return x.length ? d3.mean(x, l => l.days) : null; };
+  const incV = sumP(m => ci(m).income), gpV = sumP(m => ci(m).gp);
+  const cashM = sel === 'fy' ? 5 : sel;
+  const T = [
+    { id: 'inc', l: 'Income', v: gbp(incV), s: m => ci(m).income, c: 'var(--s1)', sc: ['period', 'region', 'customer', 'item'],
+      d: prev != null ? (ci(prev).income ? (ci(sel).income / ci(prev).income - 1) : 0) : null, dt: x => (x >= 0 ? '+' : '') + pct(x) + ' on ' + MON[prev] },
+    { id: 'gm', l: 'Gross margin', v: incV ? pct(gpV / incV) : 'n/a', s: m => ci(m).income ? ci(m).gp / ci(m).income : null, c: 'var(--s3)', sc: ['period', 'region', 'customer', 'item'],
+      d: prev != null && ci(prev).income ? (ci(sel).gp / ci(sel).income - ci(prev).gp / ci(prev).income) * 100 : null, dt: x => (x >= 0 ? '+' : '') + x.toFixed(1) + ' points on ' + MON[prev] },
+    { id: 'net', l: 'Net profit', v: gbp(sumP(m => nf(m).net)), s: m => nf(m).net, c: 'var(--s1)', sc: ['period', 'region'],
+      d: prev != null ? (nf(sel).net / nf(prev).net - 1) : null, dt: x => (x >= 0 ? '+' : '') + pct(x) + ' on ' + MON[prev] },
+    { id: 'cash', l: 'Cash at period end', v: gbp(closeAt[cashM]), s: m => closeAt[m], c: 'var(--s1)', sc: ['period'],
+      d: prev != null ? closeAt[sel] - closeAt[prev] : null, dt: x => sgn(x) + ' on ' + MON[prev] },
+    { id: 'dtp', l: 'Average days to pay', v: dtp() == null ? 'n/a' : dtp().toFixed(1) + ' days', s: m => dtp(m), c: 'var(--s2)', sc: ['period', 'region', 'customer', 'item'],
+      d: prev != null && dtp(sel) != null && dtp(prev) != null ? dtp(sel) - dtp(prev) : null, dt: x => (x >= 0 ? '+' : '') + x.toFixed(1) + ' days on ' + MON[prev] },
+  ];
+  const sps = [];
+  T.forEach(t => {
+    const ig = ignoredBy(t.sc), c = el('div', 'kpi' + (ig.length ? ' ignored' : ''));
+    c.append(el('div', 'l', t.l), el('div', 'n', t.v), el('div', 'd', t.d != null ? t.dt(t.d) : (sel === 'fy' ? 'April to September' : '')));
+    const sp = el('div', 'sp'); c.append(sp);
+    c.append(el('div', 'sc', ig.length ? 'Not filtered by ' + ig.join(', ') : scopeText(t.sc)));
+    host.append(c); sps.push([sp, t]);
+  });
+  sps.forEach(([sp, t]) => spark(sp, [0, 1, 2, 3, 4, 5].map(t.s), sel, t.c));
+  TBL.kpis = { head: ['Month', 'Income', 'Gross margin', 'Net profit', 'Cash', 'Days to pay'], rows: [0, 1, 2, 3, 4, 5].map(m => [MON[m], gbp(ci(m).income), ci(m).income ? pct(ci(m).gp / ci(m).income) : 'n/a', gbp(nf(m).net), gbp(closeAt[m]), dtp(m) == null ? 'n/a' : dtp(m).toFixed(1)]) };
+}
+
+// ---------------------------------------------------------------- generic horizontal waterfall
+function waterfall(host, steps, label, unit) {
+  const rowH = 34, mt = 8, mb = 22, h = mt + steps.length * rowH + mb;
+  const { svg, w } = svgIn(host, h, label);
+  const lw = Math.min(170, Math.floor(w * 0.4)), mr = 78;
+  let cum = 0; const bars = steps.map(s => { const a = s.total ? 0 : cum, b = s.total ? s.v : cum + s.v; if (!s.total) cum = b; else cum = s.v; return { ...s, a, b, run: cum }; });
+  const lo = Math.min(0, ...bars.map(b => Math.min(b.a, b.b))), hi = Math.max(...bars.map(b => Math.max(b.a, b.b)));
+  const x = d3.scaleLinear([lo, hi], [lw, w - mr]).nice();
+  const colour = b => b.total ? 'var(--s1)' : b.v >= 0 ? 'var(--s3)' : 'var(--s2)';
+  svg.append('g').selectAll('line').data(x.ticks(w < 480 ? 3 : 4)).join('line').attr('x1', d => x(d)).attr('x2', d => x(d)).attr('y1', mt).attr('y2', h - mb).style('stroke', 'var(--grid)');
+  svg.append('g').selectAll('text').data(x.ticks(w < 480 ? 3 : 4)).join('text').attr('x', d => x(d)).attr('y', h - 6).attr('text-anchor', 'middle').text(d => gbpK(d));
+  svg.append('line').attr('x1', x(0)).attr('x2', x(0)).attr('y1', mt).attr('y2', h - mb).style('stroke', 'var(--axis)');
+  bars.forEach((b, i) => { if (i < bars.length - 1) svg.append('line').attr('x1', x(b.run)).attr('x2', x(b.run)).attr('y1', mt + i * rowH + rowH - 7).attr('y2', mt + (i + 1) * rowH + 7).style('stroke', 'var(--axis)').attr('stroke-dasharray', '2 2'); });
+  const g = svg.append('g').selectAll('g').data(bars).join('g').attr('class', 'mk');
+  g.append('text').attr('x', 0).attr('y', (d, i) => mt + i * rowH + rowH / 2 + 4).style('fill', 'var(--ink)').each(function (d, i) { const t = d3.select(this); if (wrapText(t, d.label, lw - 8, 5.9) > 1) t.attr('y', mt + i * rowH + rowH / 2 - 2); });
+  g.append('rect').attr('x', d => x(Math.min(d.a, d.b))).attr('y', (d, i) => mt + i * rowH + 5).attr('width', d => Math.max(2, Math.abs(x(d.b) - x(d.a)))).attr('height', rowH - 10).attr('rx', 3).style('fill', colour);
+  g.append('text').attr('class', 'v').attr('y', (d, i) => mt + i * rowH + rowH / 2 + 4)
+    .attr('x', d => { const e = d.v >= 0 || d.total ? x(Math.max(d.a, d.b)) + 6 : x(Math.min(d.a, d.b)) - 6; return e; })
+    .attr('text-anchor', d => (d.v >= 0 || d.total) ? 'start' : 'end').text(d => d.total ? gbp(d.v, 0) : (d.v >= 0 ? '+' : '') + gbp(d.v, 0));
+  // wide hit rows so the whole row responds
+  const hit = svg.append('g').selectAll('rect').data(bars).join('rect').attr('x', 0).attr('width', w).attr('y', (d, i) => mt + i * rowH).attr('height', rowH).style('fill', 'transparent');
+  wire(hit, d => [d.label, [[d.total ? 'Balance' : 'Change', d.total ? gbp(d.v) : sgn(d.v), colour(d)], ['Running total', gbp(d.run)]]]);
+  return { head: [unit, 'Amount', 'Running total'], rows: bars.map(b => [b.label, b.total ? gbp(b.v) : sgn(b.v), gbp(b.run)]) };
+}
+function drawWaterfall(host) {
+  const f = k => sumP(m => plm(m, false)[k]);
+  const inc = f('income'), cos = f('cos'), am = f('am'), pay = f('pay'), oth = f('dep') + f('rent') + f('oth'), net = f('net');
+  $('#s-waterfall').textContent = perLabel() + ', ' + (regActive() ? [...S.reg].sort().map(r => REG[r].name).join(', ') : 'all regions') + '. Net profit ' + gbp(net) + (inc ? ' (' + pct(net / inc) + ' of income)' : '') + '.';
+  return waterfall(host, [
+    { label: 'Income', v: inc, total: true }, { label: 'Cost of sales', v: -cos }, { label: 'Advertising and marketing', v: -am },
+    { label: 'Payroll', v: -pay }, { label: 'Other overheads', v: -oth }, { label: 'Net profit', v: net, total: true }],
+    'Waterfall chart: income less costs gives net profit for ' + perLabel(), 'Step');
+}
+function drawCashWf(host) {
+  const ms = pMonths(), sum = (dir, kind) => BANK.filter(b => ms.includes(b.mi) && b.dir === dir && b.kind === kind).reduce((a, b) => a + b.amount, 0);
+  const first = ms[0], open = first === 0 ? OPENING : closeAt[first - 1], close = closeAt[ms[ms.length - 1]];
+  const timing = sum('in', 'VAT and timing') - sum('out', 'VAT and timing');
+  $('#s-cashwf').textContent = perLabel() + ': from ' + gbp(open) + ' to ' + gbp(close) + '. Receipts and supplier bills include VAT. "VAT and timing" is the small remainder that ties the bridge to the bank (' + sgn(timing) + ' here); the September closing figure is the real 10 October balance.';
+  const steps = [{ label: first === 0 ? 'Opening, 1 April' : 'Opening balance', v: open, total: true },
+    { label: 'Customer receipts, incl. VAT', v: sum('in', 'Customer receipts, incl. VAT') }, { label: 'Other revenue', v: sum('in', 'Other revenue') },
+    { label: 'Supplier bills, incl. VAT', v: -sum('out', 'Supplier bills, incl. VAT') }, { label: 'Wages', v: -sum('out', 'Wages') },
+    { label: 'VAT paid to HMRC', v: -sum('out', 'VAT paid to HMRC') }, { label: 'Drawings and tax', v: -sum('out', 'Drawings and tax') },
+    { label: 'VAT and timing', v: timing }, { label: 'Closing balance', v: close, total: true }].filter(t => t.total || t.v !== 0);
+  return waterfall(host, steps, 'Waterfall chart: opening cash, money in, money out and closing cash for ' + perLabel(), 'Step');
+}
+
+// ---------------------------------------------------------------- overview: combo
+function drawCombo(host) {
+  const H = 270, m = { l: 54, r: 58, t: 14, b: 26 };
+  const { svg, w } = svgIn(host, H, 'Chart: monthly income bars, net profit line and budgeted income line, April to September');
+  const ms = [0, 1, 2, 3, 4, 5], inc = ms.map(i => plm(i, false).income), net = ms.map(i => plm(i, false).net);
+  const bud = ms.map(i => BUD.filter(b => b.mi === i && b.account < 2).reduce((a, b) => a + b.amount, 0)), showB = !regActive();
+  const y = d3.scaleLinear([0, Math.max(...inc, ...(showB ? bud : [0])) * 1.1], [H - m.b, m.t]).nice();
+  const x = d3.scaleBand(ms, [m.l, w - m.r]).padding(0.3), cx = i => x(i) + x.bandwidth() / 2;
+  yGrid(svg, y, w, m, gbpK);
+  svg.append('g').selectAll('rect').data(ms).join('rect').attr('class', 'mk').attr('x', x).attr('width', x.bandwidth()).attr('y', i => y(inc[i])).attr('height', i => y(0) - y(inc[i]))
+    .attr('rx', 3).style('fill', 'var(--s1)').attr('opacity', i => S.per === 'fy' || S.per === i ? 1 : 0.4);
+  svg.append('g').selectAll('text').data(ms).join('text').attr('x', cx).attr('y', H - 8).attr('text-anchor', 'middle').text(i => MON[i]).style('fill', i => inPer(i) ? 'var(--ink)' : 'var(--muted)').style('font-weight', i => S.per === i ? 700 : 400);
+  if (showB) {
+    svg.append('path').attr('d', d3.line().x(cx).y(i => y(bud[i]))(ms)).style('fill', 'none').style('stroke', 'var(--ghost)').attr('stroke-width', 2).attr('stroke-dasharray', '5 4');
+    svg.append('text').attr('x', cx(5) + x.bandwidth() / 2 + 6).attr('y', y(bud[5]) + 4).text('Budget');
+  }
+  svg.append('path').attr('d', d3.line().x(cx).y(i => y(net[i]))(ms)).style('fill', 'none').style('stroke', 'var(--s3)').attr('stroke-width', 2.5);
+  svg.append('g').selectAll('circle').data(ms).join('circle').attr('cx', cx).attr('cy', i => y(net[i])).attr('r', 4.5).style('fill', 'var(--s3)').style('stroke', 'var(--panel)').attr('stroke-width', 2);
+  svg.append('text').attr('x', cx(5) + x.bandwidth() / 2 + 6).attr('y', y(net[5]) + 4).text('Net profit');
+  const hit = svg.append('g').selectAll('rect').data(ms).join('rect').attr('x', i => x(i) - (x.step() - x.bandwidth()) / 2).attr('width', x.step()).attr('y', m.t).attr('height', H - m.t - m.b).style('fill', 'transparent');
+  wire(hit, i => [MLONG[i] + ' 2026', [['Income', gbp(inc[i]), 'var(--s1)'], ['Net profit', gbp(net[i]), 'var(--s3)'], ...(showB ? [['Budgeted income', gbp(bud[i]), 'var(--ghost)', true]] : []), ['Net margin', pct(net[i] / inc[i])]]]);
+  return { head: ['Month', 'Income', 'Net profit', 'Net margin', 'Budgeted income'], rows: ms.map(i => [MON[i], gbp(inc[i]), gbp(net[i]), pct(net[i] / inc[i]), showB ? gbp(bud[i]) : 'hidden (not split by region)']) };
+}
+
+// ---------------------------------------------------------------- sales: treemap, heatmap, bubble
+const linesF = () => L.filter(l => inPer(l.mi) && S.reg.has(l.r) && inCus(l.c) && inItm(l.i));
+function drawTreemap(host) {
+  const by = d3.rollup(linesF(), v => ({ v: d3.sum(v, l => l.amt), cost: d3.sum(v, l => l.cost) }), l => l.c);
+  const data = [...by].map(([c, o]) => ({ c, v: o.v, mg: o.v ? (o.v - o.cost) / o.v : 0 })).filter(d => d.v > 0);
+  if (!data.length) { note(host, 'No income for this selection.'); return { head: ['Customer'], rows: [] }; }
+  const H = Math.round(Math.max(240, Math.min(360, host.clientWidth * 0.55))) + 30;
+  const { svg, w } = svgIn(host, H, 'Treemap of income by customer, coloured by margin percentage');
+  const root = d3.hierarchy({ children: data }).sum(d => d.v).sort((a, b) => b.value - a.value);
+  d3.treemap().size([w, H - 30]).paddingInner(2).round(true)(root);
+  const tl = d3.sum(data, d => d.v), mean = d3.sum(data, d => d.v * d.mg) / tl;
+  const half = Math.max(0.004, 1.2 * d3.sum(data, d => d.v * Math.abs(d.mg - mean)) / tl);
+  const t = d => Math.max(-1, Math.min(1, (d.mg - mean) / half));
+  const one = S.cus.size === 1 ? [...S.cus][0] : null;
+  const g = svg.append('g').selectAll('g').data(root.leaves()).join('g').attr('class', 'mk').attr('transform', d => `translate(${d.x0},${d.y0})`);
+  const fill = d => div(t(d.data));
+  g.append('rect').attr('width', d => d.x1 - d.x0).attr('height', d => d.y1 - d.y0).attr('rx', 3).style('fill', fill).classed('sel', d => d.data.c === one).style('cursor', 'pointer');
+  g.each(function (d) {
+    const gw = d.x1 - d.x0, gh = d.y1 - d.y0, s = d3.select(this), col = textOn(fill(d));
+    if (gw > 64 && gh > 30) {
+      s.append('text').attr('x', 6).attr('y', 16).style('fill', col).style('font-weight', 600).text(fitText(CUS[d.data.c].name, gw - 10, 5.9));
+      s.append('text').attr('x', 6).attr('y', 30).style('fill', col).text(gbpK(d.data.v) + (gh > 44 ? '' : '') + ' | ' + pct(d.data.mg, 0));
+    }
+  });
+  const act = (d) => { S.cus = (S.cus.size === 1 && S.cus.has(d.data.c)) ? new Set() : new Set([d.data.c]); fire(); };
+  g.attr('tabindex', 0).attr('role', 'button').attr('aria-label', d => `${CUS[d.data.c].name}: income ${gbp(d.data.v)}, margin ${pct(d.data.mg)}. Select to filter by this customer.`)
+    .on('click', (e, d) => act(d)).on('keydown', (e, d) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); act(d); } })
+    .on('pointermove', (e, d) => { tipFill(CUS[d.data.c].name, [['Income', gbp(d.data.v)], ['Margin', pct(d.data.mg)], ['Share of income', pct(d.data.v / root.value)]]); tipAt(e.clientX, e.clientY); })
+    .on('pointerleave', hideTip).on('focus', (e, d) => { tipFill(CUS[d.data.c].name, [['Income', gbp(d.data.v)], ['Margin', pct(d.data.mg)]]); const b = e.currentTarget.getBoundingClientRect(); tipAt(b.left + b.width / 2, b.top + b.height / 2); }).on('blur', hideTip);
+  const lg = svg.append('g').attr('transform', `translate(0,${H - 18})`), n = 9;
+  for (let k = 0; k < n; k++) lg.append('rect').attr('x', k * 20).attr('width', 20).attr('height', 10).style('fill', div(-1 + 2 * k / (n - 1)));
+  lg.append('text').attr('x', n * 20 + 6).attr('y', 9).text('Below / above average margin (' + pct(mean) + ')');
+  return { head: ['Customer', 'Income', 'Margin', 'Share'], rows: data.sort((a, b) => b.v - a.v).map(d => [CUS[d.c].name, gbp(d.v), pct(d.mg), pct(d.v / root.value)]) };
+}
+function drawHeat(host) {
+  const lines = linesF(), cs = CUS.filter(c => inCus(c.id)).map(c => c.id), is = ITM.filter(i => inItm(i.id)).map(i => i.id);
+  const val = (c, i) => d3.sum(lines.filter(l => l.c === c && l.i === i), l => l.amt);
+  const rs = cs.filter(c => d3.sum(is, i => val(c, i)) > 0).sort((a, b) => d3.sum(is, i => val(b, i)) - d3.sum(is, i => val(a, i)));
+  if (!rs.length) { note(host, 'No income for this selection.'); return { head: ['Customer'], rows: [] }; }
+  const rowH = 28, top = 26, H = top + rs.length * rowH + 4, w0 = host.clientWidth;
+  const { svg, w } = svgIn(host, H, 'Heatmap of income by customer and item');
+  const lw = w0 < 480 ? 104 : 150, tw = 62, cw = (w - lw - tw) / is.length;
+  const mx = d3.max(rs, c => d3.max(is, i => val(c, i)));
+  is.forEach((i, k) => svg.append('text').attr('x', lw + k * cw + cw / 2).attr('y', 16).attr('text-anchor', 'middle').text(SHORT[i]));
+  svg.append('text').attr('x', w - 4).attr('y', 16).attr('text-anchor', 'end').text('Total');
+  rs.forEach((c, r) => {
+    svg.append('text').attr('x', 0).attr('y', top + r * rowH + rowH / 2 + 4).style('fill', 'var(--ink)').text(fitText(CUS[c].name, lw - 8, 5.9));
+    svg.append('text').attr('class', 'v').attr('x', w - 4).attr('y', top + r * rowH + rowH / 2 + 4).attr('text-anchor', 'end').text(gbpK(d3.sum(is, i => val(c, i))));
+  });
+  const cells = []; rs.forEach((c, r) => is.forEach((i, k) => cells.push({ c, i, r, k, v: val(c, i) })));
+  const g = svg.append('g').selectAll('g').data(cells).join('g').attr('class', 'mk');
+  g.append('rect').attr('x', d => lw + d.k * cw + 1).attr('y', d => top + d.r * rowH + 1).attr('width', cw - 2).attr('height', rowH - 2).attr('rx', 3)
+    .style('fill', d => d.v ? seq(0.1 + 0.9 * Math.sqrt(d.v / mx)) : 'transparent').style('stroke', d => d.v ? 'none' : 'var(--line)');
+  g.append('text').attr('x', d => lw + d.k * cw + cw / 2).attr('y', d => top + d.r * rowH + rowH / 2 + 4).attr('text-anchor', 'middle')
+    .style('fill', d => d.v ? textOn(seq(0.1 + 0.9 * Math.sqrt(d.v / mx))) : 'var(--muted)').text(d => d.v ? gbpK(d.v) : '-');
+  const hit = svg.append('g').selectAll('rect').data(cells).join('rect').attr('x', d => lw + d.k * cw).attr('y', d => top + d.r * rowH).attr('width', cw).attr('height', rowH).style('fill', 'transparent');
+  wire(hit, d => [CUS[d.c].name + ', ' + ITM[d.i].name, [['Income', gbp(d.v)], ['Share of customer', pct(d.v / d3.sum(is, i => val(d.c, i)))]]]);
+  return { head: ['Customer', ...is.map(i => ITM[i].name), 'Total'], rows: rs.map(c => [CUS[c].name, ...is.map(i => gbp(val(c, i))), gbp(d3.sum(is, i => val(c, i)))]) };
+}
+function drawBubble(host) {
+  const by = d3.rollup(linesF(), v => ({ amt: d3.sum(v, l => l.amt), qty: d3.sum(v, l => l.qty) }), l => l.c + '|' + l.i);
+  const pts = [...by].map(([k, o]) => { const [c, i] = k.split('|').map(Number); return { c, i, amt: o.amt, qty: o.qty, price: o.amt / o.qty / 100 }; }).filter(p => p.qty > 0).sort((a, b) => b.amt - a.amt);
+  if (!pts.length) { note(host, 'No sales for this selection.'); return { head: ['Customer'], rows: [] }; }
+  const H = 300, m = { l: 44, r: 12, t: 10, b: 36 };
+  const { svg, w } = svgIn(host, H, 'Bubble chart of average price against units sold, one bubble per customer and item');
+  const px = d3.extent(pts, p => p.price), qy = d3.extent(pts, p => p.qty);
+  const x = d3.scaleLog([px[0] * 0.8, px[1] * 1.25], [m.l, w - m.r]), y = d3.scaleLog([Math.max(0.8, qy[0] * 0.7), qy[1] * 1.4], [H - m.b, m.t]);
+  const r = d3.scaleSqrt([0, d3.max(pts, p => p.amt)], [3, 16]);
+  const xt = [10, 20, 50, 100, 200, 500, 1000, 2000].filter(v => v >= x.domain()[0] && v <= x.domain()[1]), yt = [1, 2, 5, 10, 20, 50, 100, 200, 500].filter(v => v >= y.domain()[0] && v <= y.domain()[1]);
+  svg.append('g').selectAll('line').data(yt).join('line').attr('x1', m.l).attr('x2', w - m.r).attr('y1', y).attr('y2', y).style('stroke', 'var(--grid)');
+  svg.append('g').selectAll('text').data(yt).join('text').attr('x', m.l - 6).attr('y', d => y(d) + 4).attr('text-anchor', 'end').text(d => d);
+  svg.append('g').selectAll('text').data(xt).join('text').attr('x', x).attr('y', H - 20).attr('text-anchor', 'middle').text(d => '£' + d);
+  svg.append('text').attr('x', (m.l + w - m.r) / 2).attr('y', H - 4).attr('text-anchor', 'middle').text('Average price per unit (log scale)');
+  svg.append('text').attr('transform', `translate(10,${(m.t + H - m.b) / 2}) rotate(-90)`).attr('text-anchor', 'middle').text('Units sold');
+  svg.append('g').selectAll('circle').data(pts).join('circle').attr('class', 'mk').attr('cx', p => x(p.price)).attr('cy', p => y(p.qty)).attr('r', p => r(p.amt))
+    .style('fill', p => slot(p.i)).attr('fill-opacity', 0.85).style('stroke', 'var(--panel)').attr('stroke-width', 2);
+  const hit = svg.append('g').selectAll('circle').data(pts).join('circle').attr('cx', p => x(p.price)).attr('cy', p => y(p.qty)).attr('r', p => Math.max(r(p.amt), 12)).style('fill', 'transparent');
+  wire(hit, p => [CUS[p.c].name + ', ' + ITM[p.i].name, [['Income', gbp(p.amt), slot(p.i)], ['Units', String(p.qty)], ['Average price', gbp(p.price * 100)]]]);
+  return { head: ['Customer', 'Item', 'Units', 'Average price', 'Income'], rows: pts.map(p => [CUS[p.c].name, ITM[p.i].name, String(p.qty), gbp(p.price * 100), gbp(p.amt)]) };
+}
+
+// ---------------------------------------------------------------- receivables: aged debt, beeswarm
+const BUCKETS = ['Not yet due', '0-30 days', '31-60 days', '61-90 days', 'Over 90'];
+const bucketOf = o => o < 0 ? 0 : o <= 30 ? 1 : o <= 60 ? 2 : o <= 90 ? 3 : 4;
+function drawAged(host) {
+  const op = L.filter(l => l.open && S.reg.has(l.r) && inCus(l.c) && inItm(l.i));
+  const tot = d3.sum(op, l => l.amt), ovd = d3.sum(op.filter(l => l.over >= 0), l => l.amt);
+  $('#s-aged').textContent = op.length ? `Owed ${gbp(tot)} across ${op.length} invoices; ${gbp(ovd)} overdue (${pct(tot ? ovd / tot : 0)}). Columns show days past the due date.` : 'Nothing is owed for this selection.';
+  if (!op.length) { note(host, 'No open invoices for this selection.'); return { head: ['Customer'], rows: [] }; }
+  const cs = [...new Set(op.map(l => l.c))].sort((a, b) => d3.sum(op.filter(l => l.c === b), l => l.amt) - d3.sum(op.filter(l => l.c === a), l => l.amt));
+  const cell = (c, b) => d3.sum(op.filter(l => l.c === c && bucketOf(l.over) === b), l => l.amt);
+  const rowH = 28, top = 26, H = top + (cs.length + 1) * rowH + 4;
+  const { svg, w } = svgIn(host, H, 'Heatmap of money owed by customer and age of debt');
+  const lw = w < 480 ? 100 : 140, tw = 60, cw = (w - lw - tw) / 5, mx = d3.max(cs, c => d3.max(BUCKETS, (_, b) => cell(c, b)));
+  BUCKETS.forEach((b, k) => svg.append('text').attr('x', lw + k * cw + cw / 2).attr('y', 16).attr('text-anchor', 'middle').text(w < 480 ? b.replace(' days', '').replace('Not yet due', 'Not due') : b));
+  svg.append('text').attr('x', w - 4).attr('y', 16).attr('text-anchor', 'end').text('Total');
+  const cells = []; cs.forEach((c, r) => BUCKETS.forEach((b, k) => cells.push({ c, r, k, v: cell(c, k) })));
+  cs.forEach((c, r) => {
+    svg.append('text').attr('x', 0).attr('y', top + r * rowH + rowH / 2 + 4).style('fill', 'var(--ink)').text(fitText(CUS[c].name, lw - 8, 5.9));
+    svg.append('text').attr('class', 'v').attr('x', w - 4).attr('y', top + r * rowH + rowH / 2 + 4).attr('text-anchor', 'end').text(gbpK(d3.sum(op.filter(l => l.c === c), l => l.amt)));
+  });
+  const tr = cs.length;
+  svg.append('text').attr('x', 0).attr('y', top + tr * rowH + rowH / 2 + 4).style('fill', 'var(--ink)').style('font-weight', 700).text('All customers');
+  BUCKETS.forEach((b, k) => svg.append('text').attr('class', 'v').attr('x', lw + k * cw + cw / 2).attr('y', top + tr * rowH + rowH / 2 + 4).attr('text-anchor', 'middle').text(gbpK(d3.sum(op.filter(l => bucketOf(l.over) === k), l => l.amt))));
+  svg.append('text').attr('class', 'v').attr('x', w - 4).attr('y', top + tr * rowH + rowH / 2 + 4).attr('text-anchor', 'end').text(gbpK(tot));
+  svg.append('line').attr('x1', 0).attr('x2', w).attr('y1', top + tr * rowH).attr('y2', top + tr * rowH).style('stroke', 'var(--axis)');
+  const fl = d => seq(0.12 + 0.88 * Math.sqrt(d.v / mx));
+  const g = svg.append('g').selectAll('g').data(cells).join('g').attr('class', 'mk');
+  g.append('rect').attr('x', d => lw + d.k * cw + 1).attr('y', d => top + d.r * rowH + 1).attr('width', cw - 2).attr('height', rowH - 2).attr('rx', 3).style('fill', d => d.v ? fl(d) : 'transparent').style('stroke', d => d.v ? 'none' : 'var(--line)');
+  g.append('text').attr('x', d => lw + d.k * cw + cw / 2).attr('y', d => top + d.r * rowH + rowH / 2 + 4).attr('text-anchor', 'middle').style('fill', d => d.v ? textOn(fl(d)) : 'var(--muted)').text(d => d.v ? gbpK(d.v) : '-');
+  const hit = svg.append('g').selectAll('rect').data(cells).join('rect').attr('x', d => lw + d.k * cw).attr('y', d => top + d.r * rowH).attr('width', cw).attr('height', rowH).style('fill', 'transparent');
+  wire(hit, d => [CUS[d.c].name + ', ' + BUCKETS[d.k], [['Owed', gbp(d.v)], ['Invoices', String(op.filter(l => l.c === d.c && bucketOf(l.over) === d.k).length)]]]);
+  return { head: ['Customer', ...BUCKETS, 'Total'], rows: cs.map(c => [CUS[c].name, ...BUCKETS.map((_, b) => gbp(cell(c, b))), gbp(d3.sum(op.filter(l => l.c === c), l => l.amt))]) };
+}
+function drawSwarm(host) {
+  const ls = L.filter(l => inPer(l.mi) && S.reg.has(l.r) && inCus(l.c) && inItm(l.i));
+  const cs = [...new Set(ls.map(l => l.c))];
+  $('#s-swarm').textContent = 'Filled dots are paid invoices, rings are invoices still open (days since the invoice date, as at 30 September). The dashed line is 30-day terms; the tick is each customer\'s average.'
+    + (S.per === 'fy' ? '' : ' Only invoices from ' + MON[S.per] + ' already paid by 30 September count; late payers look faster than they are. Choose FYTD for the fair average.');
+  if (!cs.length) { note(host, 'No invoices for this selection.'); return { head: ['Customer'], rows: [] }; }
+  const avg = c => { const p = ls.filter(l => l.c === c && l.days != null); return p.length ? d3.mean(p, l => l.days) : -1; };
+  cs.sort((a, b) => avg(b) - avg(a));
+  const r = 4.2, dd = 2 * r + 1, top = 22, mb = 24;
+  const w0 = Math.max(240, Math.floor(host.clientWidth));
+  const lw = w0 < 480 ? 104 : 150, mr = 12, maxD = Math.max(60, Math.ceil(d3.max(ls, l => l.days != null ? l.days : l.out) / 10) * 10);
+  const x = d3.scaleLinear([0, maxD], [lw, w0 - mr]);
+  const rowsL = cs.map(c => {
+    const pts = ls.filter(l => l.c === c).map(l => ({ l, v: l.days != null ? l.days : l.out, open: l.days == null })).sort((a, b) => a.v - b.v), placed = [];
+    pts.forEach(p => {
+      p.x = x(p.v); let k = 0;
+      for (; k < 40; k++) { const off = (k % 2 ? 1 : -1) * Math.ceil(k / 2) * dd; if (!placed.some(q => Math.hypot(q.x - p.x, q.off - off) < 2 * r + 0.8)) { p.off = off; break; } }
+      if (p.off == null) p.off = 0; placed.push(p);
+    });
+    const lev = d3.max(pts, p => Math.abs(p.off)) || 0;
+    return { c, pts, h: Math.max(38, 2 * lev + 2 * r + 14) };
+  });
+  let yy = top; rowsL.forEach(rw => { rw.y0 = yy; rw.cy = yy + rw.h / 2; yy += rw.h; });
+  const H = yy + mb, { svg } = svgIn(host, H, 'Beeswarm of days to pay, one dot per invoice, grouped by customer, against 30-day terms');
+  x.ticks(6).forEach(t => { svg.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', top - 4).attr('y2', H - mb).style('stroke', 'var(--grid)'); svg.append('text').attr('x', x(t)).attr('y', H - 8).attr('text-anchor', 'middle').text(t); });
+  svg.append('text').attr('x', lw - 8).attr('y', H - 8).attr('text-anchor', 'end').text('days');
+  svg.append('line').attr('x1', x(30)).attr('x2', x(30)).attr('y1', top - 4).attr('y2', H - mb).style('stroke', 'var(--ink)').attr('stroke-dasharray', '4 3');
+  svg.append('text').attr('x', x(30) + 4).attr('y', 12).style('fill', 'var(--ink)').text('30-day terms');
+  const allPts = [];
+  rowsL.forEach(rw => {
+    const rg = svg.append('g').attr('tabindex', 0).attr('role', 'img');
+    const pd = rw.pts.filter(p => !p.open), a = pd.length ? d3.mean(pd, p => p.v) : null;
+    const lab = `${CUS[rw.c].name}: ${pd.length} paid${a != null ? ', average ' + a.toFixed(0) + ' days' : ''}${rw.pts.length - pd.length ? ', ' + (rw.pts.length - pd.length) + ' open' : ''}`;
+    rg.attr('aria-label', lab);
+    rg.on('focus', e => { tipFill(CUS[rw.c].name, [['Paid invoices', String(pd.length)], ['Average days to pay', a != null ? a.toFixed(1) : 'n/a'], ['Slowest', pd.length ? Math.max(...pd.map(p => p.v)) + ' days' : 'n/a'], ['Open invoices', String(rw.pts.length - pd.length)]]); const b = e.currentTarget.getBoundingClientRect(); tipAt(b.left + 60, b.top + b.height / 2); }).on('blur', hideTip);
+    svg.append('line').attr('x1', lw).attr('x2', w0 - mr).attr('y1', rw.y0 + rw.h).attr('y2', rw.y0 + rw.h).style('stroke', 'var(--line)');
+    rg.append('text').attr('x', 0).attr('y', rw.cy - 2).style('fill', 'var(--ink)').text(fitText(CUS[rw.c].name, lw - 8, 5.9));
+    rg.append('text').attr('x', 0).attr('y', rw.cy + 11).text(a != null ? 'avg ' + a.toFixed(0) + ' days, ' + pd.length + ' paid' : rw.pts.length + ' open');
+    rw.pts.forEach(p => {
+      const cx = p.x, cy = rw.cy + p.off; allPts.push({ ...p, cx, cy, c: rw.c });
+      rg.append('circle').attr('class', 'mk').attr('cx', cx).attr('cy', cy).attr('r', r).style('fill', p.open ? 'none' : 'var(--s1)').style('stroke', p.open ? 'var(--s2)' : 'var(--panel)').attr('stroke-width', p.open ? 2 : 1.2);
+    });
+    if (a != null) rg.append('line').attr('x1', x(a)).attr('x2', x(a)).attr('y1', rw.y0 + 4).attr('y2', rw.y0 + rw.h - 4).style('stroke', 'var(--ink)').attr('stroke-width', 2).attr('opacity', 0.55);
+  });
+  const del = d3.Delaunay.from(allPts, d => d.cx, d => d.cy), ring = svg.append('circle').attr('r', r + 3).style('fill', 'none').style('stroke', 'var(--ink)').attr('stroke-width', 2).attr('display', 'none');
+  svg.append('rect').attr('x', 0).attr('y', top - 4).attr('width', w0).attr('height', H - top - mb + 4).style('fill', 'transparent')
+    .on('pointermove', e => {
+      const [mx, my] = d3.pointer(e), i = del.find(mx, my), p = allPts[i];
+      if (!p || Math.hypot(p.cx - mx, p.cy - my) > 26) { ring.attr('display', 'none'); hideTip(); return; }
+      ring.attr('display', null).attr('cx', p.cx).attr('cy', p.cy);
+      tipFill(CUS[p.c].name + ', INV-' + String(p.l.inv).padStart(4, '0'), [['Invoice date', p.l.d], ['Item', ITM[p.l.i].name], ['Amount', gbp(p.l.amt)], [p.open ? 'Days open at 30 Sep' : 'Days to pay', String(p.v)]]); tipAt(e.clientX, e.clientY);
+    }).on('pointerleave', () => { ring.attr('display', 'none'); hideTip(); });
+  return { head: ['Customer', 'Invoices', 'Paid', 'Average days to pay', 'Open'], rows: rowsL.map(rw => { const pd = rw.pts.filter(p => !p.open); return [CUS[rw.c].name, String(rw.pts.length), String(pd.length), pd.length ? d3.mean(pd, p => p.v).toFixed(1) : 'n/a', String(rw.pts.length - pd.length)]; }) };
+}
+
+// ---------------------------------------------------------------- cash outlook
+function drawRunway(host) {
+  const H = 280, m = { l: 54, r: 16, t: 16, b: 26 };
+  const { svg, w } = svgIn(host, H, 'Line chart of closing cash by month with a three month forecast range');
+  const labs = [...MON, ...FC.map(f => f.label)], hist = closeAt.map((v, i) => ({ i, v })), fc = FC.map((f, k) => ({ i: 6 + k, ...f }));
+  const x = d3.scalePoint(d3.range(9), [m.l + 10, w - m.r - 10]), y = d3.scaleLinear([0, d3.max(fc, f => f.high) * 1.1], [H - m.b, m.t]).nice();
+  yGrid(svg, y, w, m, gbpK);
+  svg.append('g').selectAll('text').data(d3.range(9)).join('text').attr('x', x).attr('y', H - 8).attr('text-anchor', 'middle').text(i => labs[i]);
+  const start = { i: 5, low: closeAt[5], base: closeAt[5], high: closeAt[5] }, band = [start, ...fc];
+  svg.append('path').attr('d', d3.area().x(d => x(d.i)).y0(d => y(d.low)).y1(d => y(d.high))(band)).style('fill', 'var(--s1)').attr('opacity', 0.2);
+  svg.append('path').attr('d', d3.line().x(d => x(d.i)).y(d => y(d.v))(hist)).style('fill', 'none').style('stroke', 'var(--s1)').attr('stroke-width', 2.5);
+  svg.append('path').attr('d', d3.line().x(d => x(d.i)).y(d => y(d.base))(band)).style('fill', 'none').style('stroke', 'var(--s1)').attr('stroke-width', 2.5).attr('stroke-dasharray', '6 4');
+  svg.append('g').selectAll('circle').data([...hist.map(h => ({ i: h.i, v: h.v })), ...fc.map(f => ({ i: f.i, v: f.base }))]).join('circle').attr('cx', d => x(d.i)).attr('cy', d => y(d.v)).attr('r', 4).style('fill', 'var(--s1)').style('stroke', 'var(--panel)').attr('stroke-width', 2);
+  svg.append('line').attr('x1', x(5)).attr('x2', x(5)).attr('y1', m.t).attr('y2', H - m.b).style('stroke', 'var(--axis)').attr('stroke-dasharray', '3 3');
+  svg.append('text').attr('x', x(5) + 6).attr('y', m.t + 8).text('Forecast from here');
+  const hit = svg.append('g').selectAll('rect').data(d3.range(9)).join('rect').attr('x', i => x(i) - x.step() / 2).attr('width', x.step()).attr('y', m.t).attr('height', H - m.t - m.b).style('fill', 'transparent');
+  const row = i => i < 6 ? [labs[i] + ' 2026, actual', [['Closing cash', gbp(closeAt[i]), 'var(--s1)']]] : [labs[i] + ' 2026, forecast', [['Expected', gbp(fc[i - 6].base), 'var(--s1)', true], ['Low', gbp(fc[i - 6].low)], ['High', gbp(fc[i - 6].high)]]];
+  wire(hit, row);
+  return { head: ['Month', 'Type', 'Closing cash', 'Low', 'High'], rows: d3.range(9).map(i => i < 6 ? [labs[i], 'Actual', gbp(closeAt[i]), '', ''] : [labs[i], 'Forecast', gbp(fc[i - 6].base), gbp(fc[i - 6].low), gbp(fc[i - 6].high)]) };
+}
+
+// ---------------------------------------------------------------- costs: bullets, treemap, payroll line, slope
+function actualFor(a) {
+  const ms = pMonths();
+  if (a === 0) return d3.sum(L.filter(l => ms.includes(l.mi)), l => l.amt);
+  if (a === 1) return d3.sum(OTH.filter(o => ms.includes(o.mi)), o => o.amount);
+  if (a === 2) return d3.sum(L.filter(l => ms.includes(l.mi)), l => l.cost);
+  if (a === 4) return d3.sum(PAYR.filter(p => ms.includes(p.mi)), p => p.amount);
+  if (a === 5) return d3.sum(DEP.filter(p => ms.includes(p.mi)), p => p.charge);
+  return d3.sum(B.filter(b => ms.includes(b.mi) && b.a === a), b => b.amt);
+}
+function drawBullets(host) {
+  const ms = pMonths(), order = [0, 1, 2, 3, 4, 5, 6, 7], rowH = 52, top = 6, H = top + order.length * rowH + 4;
+  const { svg, w } = svgIn(host, H, 'Bullet charts of actual against budget for each account');
+  const lw = w < 480 ? 96 : 140, bx0 = lw, bx1 = w - 6, hdr = [];
+  const out = order.map(a => { const act = actualFor(a), bud = d3.sum(BUD.filter(b => ms.includes(b.mi) && b.account === a), b => b.amount), inc = a < 2; return { a, act, bud, inc, bad: inc ? act < bud : act > bud }; });
+  out.forEach((o, k) => {
+    const y0 = top + k * rowH, dom = Math.max(o.bud * 1.25, o.act * 1.02), x = d3.scaleLinear([0, dom], [bx0, bx1]);
+    const t = svg.append('text').attr('x', 0).attr('y', y0 + 16).style('fill', 'var(--ink)').text(ACC[o.a].name); wrapText(t, ACC[o.a].name, lw - 8, 5.8);
+    [[1.2, 0.07], [1.0, 0.11], [0.8, 0.17]].forEach(([f, op]) => svg.append('rect').attr('x', bx0).attr('y', y0 + 6).attr('width', Math.max(0, x(o.bud * f) - bx0)).attr('height', 20).style('fill', 'var(--ink)').attr('opacity', op));
+    svg.append('rect').attr('class', 'mk').attr('x', bx0).attr('y', y0 + 12).attr('width', Math.max(2, x(o.act) - bx0)).attr('height', 8).attr('rx', 3).style('fill', o.bad ? 'var(--s2)' : 'var(--s1)');
+    svg.append('line').attr('x1', x(o.bud)).attr('x2', x(o.bud)).attr('y1', y0 + 6).attr('y2', y0 + 26).style('stroke', 'var(--ink)').attr('stroke-width', 2.5);
+    const v = o.act - o.bud, p = o.bud ? v / o.bud : 0, word = v === 0 ? 'on budget' : o.inc ? (o.bad ? 'below target' : 'ahead') : (o.bad ? 'over budget' : 'under budget');
+    svg.append('text').attr('x', bx0).attr('y', y0 + 41).text(`${gbp(o.act, 0)} against ${gbp(o.bud, 0)} (${p >= 0 ? '+' : ''}${(p * 100).toFixed(1)}%, ${word})`);
+    svg.append('rect').attr('x', 0).attr('y', y0).attr('width', w).attr('height', rowH).style('fill', 'transparent').datum(o).call(s => wire(s, d => [ACC[d.a].name, [['Actual', gbp(d.act), d.bad ? 'var(--s2)' : 'var(--s1)'], ['Budget', gbp(d.bud)], ['Variance', sgn(d.act - d.bud)], ['Status', word]]]));
+  });
+  return { head: ['Account', 'Actual', 'Budget', 'Variance', 'Status'], rows: out.map(o => [ACC[o.a].name, gbp(o.act), gbp(o.bud), sgn(o.act - o.bud), o.act === o.bud ? 'On budget' : o.inc ? (o.bad ? 'Below target' : 'Ahead') : (o.bad ? 'Over budget' : 'Under budget')]) };
+}
+const ACC_SLOT = { 3: 0, 2: 1, 4: 2, 5: 3, 6: 4, 7: 5 };
+function drawExpTree(host) {
+  const ms = pMonths(), groups = new Map();
+  const add = (a, name, v) => { if (v <= 0) return; if (!groups.has(a)) groups.set(a, new Map()); groups.get(a).set(name, (groups.get(a).get(name) || 0) + v); };
+  B.filter(b => ms.includes(b.mi) && S.reg.has(b.r)).forEach(b => add(b.a, SUP[b.s].name, b.amt));
+  PAYR.filter(p => ms.includes(p.mi) && S.reg.has(p.region)).forEach(p => add(4, 'Payroll', p.amount));
+  DEP.filter(p => ms.includes(p.mi) && S.reg.has(AST[p.asset].region)).forEach(p => add(5, AST[p.asset].name, p.charge));
+  const tree = { children: [...groups].map(([a, mp]) => ({ a, name: ACC[a].name, children: [...mp].map(([n, v]) => ({ a, name: n, v })) })) };
+  const lg = $('#lg-acc'); lg.textContent = '';
+  tree.children.sort((p, q) => ACC_SLOT[p.a] - ACC_SLOT[q.a]).forEach(g => { const s = el('span'); const i = el('i'); i.style.background = slot(ACC_SLOT[g.a]); s.append(i, document.createTextNode(g.name)); lg.append(s); });
+  if (!tree.children.length) { note(host, 'No costs for this selection.'); return { head: ['Account'], rows: [] }; }
+  const H = Math.round(Math.max(260, Math.min(380, host.clientWidth * 0.62)));
+  const { svg, w } = svgIn(host, H, 'Treemap of costs by account and supplier');
+  const root = d3.hierarchy(tree).sum(d => d.v || 0).sort((p, q) => q.value - p.value);
+  d3.treemap().size([w, H]).paddingInner(2).paddingOuter(2).paddingTop(d => d.depth === 1 ? 16 : 2).round(true)(root);
+  svg.append('g').selectAll('text').data(root.children).join('text').attr('x', d => d.x0 + 3).attr('y', d => d.y0 + 12).style('fill', 'var(--ink)').style('font-weight', 600).text(d => fitText(d.data.name, d.x1 - d.x0 - 6, 5.9));
+  const lv = root.leaves(), fl = d => slotHex(ACC_SLOT[d.data.a]);
+  const g = svg.append('g').selectAll('g').data(lv).join('g').attr('class', 'mk').attr('transform', d => `translate(${d.x0},${d.y0})`);
+  g.append('rect').attr('width', d => d.x1 - d.x0).attr('height', d => d.y1 - d.y0).attr('rx', 3).style('fill', fl);
+  g.each(function (d) { const gw = d.x1 - d.x0, gh = d.y1 - d.y0; if (gw > 60 && gh > 28) { const s = d3.select(this), c = textOn(fl(d)); s.append('text').attr('x', 5).attr('y', 14).style('fill', c).style('font-weight', 600).text(fitText(d.data.name, gw - 8, 5.8)); s.append('text').attr('x', 5).attr('y', 27).style('fill', c).text(gbpK(d.value)); } });
+  wire(g, d => [d.data.name, [[ACC[d.data.a].name, gbp(d.value), slot(ACC_SLOT[d.data.a])], ['Share of costs shown', pct(d.value / root.value)]]]);
+  return { head: ['Account', 'Supplier', 'Cost', 'Share'], rows: lv.map(d => [ACC[d.data.a].name, d.data.name, gbp(d.value), pct(d.value / root.value)]) };
+}
+const regInc = (m, r) => d3.sum(L.filter(l => l.mi === m && l.r === r), l => l.amt) + d3.sum(OTH.filter(o => o.mi === m && o.region === r), o => o.amount);
+const regPay = (m, r) => d3.sum(PAYR.filter(p => p.mi === m && p.region === r), p => p.amount);
+function drawPayline(host) {
+  const H = 240, m = { l: 48, r: 16, t: 14, b: 26 }, ms = [0, 1, 2, 3, 4, 5], rs = [...S.reg];
+  if (!rs.length) { note(host, 'Select at least one region.'); return { head: ['Month'], rows: [] }; }
+  const { svg, w } = svgIn(host, H, 'Line chart of payroll as a percentage of income by month');
+  const v = ms.map(i => d3.sum(rs, r => regPay(i, r)) / d3.sum(rs, r => regInc(i, r)));
+  const y = d3.scaleLinear([0, Math.max(...v) * 125], [H - m.b, m.t]).nice(), x = d3.scalePoint(ms, [m.l + 14, w - m.r - 14]);
+  yGrid(svg, y, w, m, d => d.toFixed(0) + '%');
+  svg.append('g').selectAll('text').data(ms).join('text').attr('x', x).attr('y', H - 8).attr('text-anchor', 'middle').text(i => MON[i]).style('fill', i => inPer(i) ? 'var(--ink)' : 'var(--muted)').style('font-weight', i => S.per === i ? 700 : 400);
+  svg.append('path').attr('d', d3.line().x(x).y(i => y(v[i] * 100))(ms)).style('fill', 'none').style('stroke', 'var(--s1)').attr('stroke-width', 2.5);
+  svg.append('g').selectAll('circle').data(ms).join('circle').attr('cx', x).attr('cy', i => y(v[i] * 100)).attr('r', i => S.per === i ? 6 : 4).style('fill', 'var(--s1)').style('stroke', 'var(--panel)').attr('stroke-width', 2);
+  svg.append('g').selectAll('text').data(ms).join('text').attr('class', 'v').attr('x', x).attr('y', i => y(v[i] * 100) - 10).attr('text-anchor', 'middle').text(i => (v[i] * 100).toFixed(1) + '%');
+  const hit = svg.append('g').selectAll('rect').data(ms).join('rect').attr('x', i => x(i) - x.step() / 2).attr('width', x.step()).attr('y', m.t).attr('height', H - m.t - m.b).style('fill', 'transparent');
+  wire(hit, i => [MLONG[i] + ' 2026', [['Payroll share', (v[i] * 100).toFixed(1) + '%', 'var(--s1)'], ['Payroll', gbp(d3.sum(rs, r => regPay(i, r)))], ['Income', gbp(d3.sum(rs, r => regInc(i, r)))]]]);
+  return { head: ['Month', 'Payroll', 'Income', 'Share of income'], rows: ms.map(i => [MON[i], gbp(d3.sum(rs, r => regPay(i, r))), gbp(d3.sum(rs, r => regInc(i, r))), (v[i] * 100).toFixed(1) + '%']) };
+}
+function drawSlope(host) {
+  const rs = [...S.reg].sort();
+  if (!rs.length) { note(host, 'Select at least one region.'); return { head: ['Region'], rows: [] }; }
+  const H = 260, m = { t: 26, b: 14 }, { svg, w } = svgIn(host, H, 'Slope chart of payroll share of income by region, April against September');
+  const lw = Math.min(110, w * 0.3), x0 = lw, x1 = w - lw;
+  const d = rs.map(r => ({ r, a: regPay(0, r) / regInc(0, r) * 100, b: regPay(5, r) / regInc(5, r) * 100 }));
+  const y = d3.scaleLinear([Math.max(0, d3.min(d, q => Math.min(q.a, q.b)) - 2), d3.max(d, q => Math.max(q.a, q.b)) + 2], [H - m.b, m.t]);
+  svg.append('text').attr('x', x0).attr('y', 14).attr('text-anchor', 'middle').style('fill', 'var(--ink)').text('Apr');
+  svg.append('text').attr('x', x1).attr('y', 14).attr('text-anchor', 'middle').style('fill', 'var(--ink)').text('Sep');
+  const spread = (key) => { const s = d.map(q => ({ q, y: y(q[key]) })).sort((p, q) => p.y - q.y); for (let i = 1; i < s.length; i++) if (s[i].y - s[i - 1].y < 14) s[i].y = s[i - 1].y + 14; return new Map(s.map(o => [o.q.r, o.y])); };
+  const la = spread('a'), lb = spread('b');
+  const g = svg.append('g').selectAll('g').data(d).join('g').attr('class', 'mk');
+  g.append('line').attr('x1', x0).attr('x2', x1).attr('y1', q => y(q.a)).attr('y2', q => y(q.b)).style('stroke', q => slot(q.r)).attr('stroke-width', 2.5);
+  g.append('circle').attr('cx', x0).attr('cy', q => y(q.a)).attr('r', 5).style('fill', q => slot(q.r)).style('stroke', 'var(--panel)').attr('stroke-width', 2);
+  g.append('circle').attr('cx', x1).attr('cy', q => y(q.b)).attr('r', 5).style('fill', q => slot(q.r)).style('stroke', 'var(--panel)').attr('stroke-width', 2);
+  g.append('text').attr('class', 'v').attr('x', x0 - 10).attr('y', q => la.get(q.r) + 4).attr('text-anchor', 'end').text(q => `${REG[q.r].name} ${q.a.toFixed(1)}%`);
+  g.append('text').attr('class', 'v').attr('x', x1 + 10).attr('y', q => lb.get(q.r) + 4).text(q => `${q.b.toFixed(1)}% ${REG[q.r].name}`);
+  const hit = svg.append('g').selectAll('line').data(d).join('line').attr('x1', x0).attr('x2', x1).attr('y1', q => y(q.a)).attr('y2', q => y(q.b)).style('stroke', 'transparent').attr('stroke-width', 18);
+  wire(hit, q => [REG[q.r].name, [['April', q.a.toFixed(1) + '%', slot(q.r)], ['September', q.b.toFixed(1) + '%', slot(q.r)], ['Change', (q.b - q.a >= 0 ? '+' : '') + (q.b - q.a).toFixed(1) + ' points']]]);
+  return { head: ['Region', 'April', 'September', 'Change'], rows: d.map(q => [REG[q.r].name, q.a.toFixed(1) + '%', q.b.toFixed(1) + '%', (q.b - q.a >= 0 ? '+' : '') + (q.b - q.a).toFixed(1) + ' points']) };
+}
+
+// ---------------------------------------------------------------- projects and assets
+function drawDumbbell(host) {
+  const ms = pMonths(), ps = PRJ.filter(p => inCus(p.customer));
+  if (!ps.length) { note(host, 'No projects for this customer.'); return { head: ['Project'], rows: [] }; }
+  const dat = ps.map(p => ({ p, billed: d3.sum(PT.filter(t => t.project === p.id && ms.includes(t.mi)), t => t.billed), cost: d3.sum(PT.filter(t => t.project === p.id && ms.includes(t.mi)), t => t.cost) }));
+  const rowH = 60, top = 10, H = top + dat.length * rowH + 26, { svg, w } = svgIn(host, H, 'Dumbbell chart of amount billed against time cost for each project');
+  const lw = w < 480 ? 104 : 160, x = d3.scaleLinear([0, d3.max(dat, q => q.billed) * 1.12], [lw, w - 54]).nice();
+  svg.append('g').selectAll('line').data(x.ticks(w < 480 ? 3 : 4)).join('line').attr('x1', x).attr('x2', x).attr('y1', top).attr('y2', H - 22).style('stroke', 'var(--grid)');
+  svg.append('g').selectAll('text').data(x.ticks(w < 480 ? 3 : 4)).join('text').attr('x', x).attr('y', H - 6).attr('text-anchor', 'middle').text(d => gbpK(d));
+  dat.forEach((q, i) => {
+    const cy = top + i * rowH + rowH / 2;
+    svg.append('text').attr('x', 0).attr('y', cy - 2).style('fill', 'var(--ink)').text(fitText(q.p.name, lw - 8, 5.9));
+    svg.append('text').attr('x', 0).attr('y', cy + 12).text(fitText(CUS[q.p.customer].name, lw - 8, 5.6));
+    svg.append('line').attr('x1', x(q.cost)).attr('x2', x(q.billed)).attr('y1', cy).attr('y2', cy).style('stroke', 'var(--axis)').attr('stroke-width', 4).attr('stroke-linecap', 'round');
+    svg.append('circle').attr('class', 'mk').attr('cx', x(q.billed)).attr('cy', cy).attr('r', 8).style('fill', 'var(--s1)').style('stroke', 'var(--panel)').attr('stroke-width', 2);
+    svg.append('circle').attr('class', 'mk').attr('cx', x(q.cost)).attr('cy', cy).attr('r', 8).style('fill', 'var(--s2)').style('stroke', 'var(--panel)').attr('stroke-width', 2);
+    svg.append('text').attr('class', 'v').attr('x', x(q.billed)).attr('y', cy - 14).attr('text-anchor', 'middle').text(gbp(q.billed, 0));
+    svg.append('text').attr('class', 'v').attr('x', x(q.cost)).attr('y', cy + 24).attr('text-anchor', 'middle').text(gbp(q.cost, 0));
+    svg.append('text').attr('x', w - 2).attr('y', cy + 4).attr('text-anchor', 'end').text(pct(1 - q.cost / q.billed, 0));
+  });
+  svg.append('text').attr('x', w - 2).attr('y', top + 2).attr('text-anchor', 'end').text('margin');
+  const hit = svg.append('g').selectAll('rect').data(dat).join('rect').attr('x', 0).attr('width', w).attr('y', (q, i) => top + i * rowH).attr('height', rowH).style('fill', 'transparent');
+  wire(hit, q => [q.p.name + ' (' + CUS[q.p.customer].name + ')', [['Billed', gbp(q.billed), 'var(--s1)'], ['Time cost', gbp(q.cost), 'var(--s2)'], ['Margin', pct(1 - q.cost / q.billed)]]]);
+  return { head: ['Project', 'Customer', 'Billed', 'Time cost', 'Margin'], rows: dat.map(q => [q.p.name, CUS[q.p.customer].name, gbp(q.billed), gbp(q.cost), pct(1 - q.cost / q.billed)]) };
+}
+function drawAssets(host) {
+  const as = AST.filter(a => S.reg.has(a.region));
+  const lg = $('#lg-assets'); lg.textContent = ''; AST.forEach(a => { const s = el('span'); const i = el('i'); i.style.background = slot(a.id); s.append(i, document.createTextNode(a.name)); lg.append(s); });
+  if (!as.length) { note(host, 'None of the assets sit in the selected regions.'); return { head: ['Month'], rows: [] }; }
+  const H = 260, m = { l: 54, r: 16, t: 14, b: 26 }, ms = [0, 1, 2, 3, 4, 5], { svg, w } = svgIn(host, H, 'Stacked area chart of fixed asset book value by month');
+  const nbv = (id, i) => DEP.find(d => d.asset === id && d.mi === i).nbv;
+  const rows_ = ms.map(i => { const o = { i }; as.forEach(a => { o[a.id] = nbv(a.id, i); }); return o; });
+  const stack = d3.stack().keys(as.map(a => a.id))(rows_);
+  const x = d3.scalePoint(ms, [m.l + 8, w - m.r - 8]), y = d3.scaleLinear([0, d3.max(stack[stack.length - 1], d => d[1]) * 1.05], [H - m.b, m.t]).nice();
+  yGrid(svg, y, w, m, gbpK);
+  svg.append('g').selectAll('text').data(ms).join('text').attr('x', x).attr('y', H - 8).attr('text-anchor', 'middle').text(i => MON[i]);
+  svg.append('g').selectAll('path').data(stack).join('path').attr('class', 'mk').attr('d', d3.area().x((d, k) => x(k)).y0(d => y(d[0])).y1(d => y(d[1]))).style('fill', s => slot(+s.key)).style('stroke', 'var(--panel)').attr('stroke-width', 2);
+  const hit = svg.append('g').selectAll('rect').data(ms).join('rect').attr('x', i => x(i) - x.step() / 2).attr('width', x.step()).attr('y', m.t).attr('height', H - m.t - m.b).style('fill', 'transparent');
+  wire(hit, i => [MLONG[i] + ' 2026, month end', [...as.map(a => [a.name, gbp(nbv(a.id, i)), slot(a.id)]), ['Total', gbp(d3.sum(as, a => nbv(a.id, i)))]]]);
+  return { head: ['Month', ...as.map(a => a.name), 'Total'], rows: ms.map(i => [MON[i], ...as.map(a => gbp(nbv(a.id, i))), gbp(d3.sum(as, a => nbv(a.id, i)))]) };
+}
+let depSort = { k: 'name', dir: 1 };
+function drawDepTable(host) {
+  host.textContent = '';
+  const end = S.per === 'fy' ? 5 : S.per, ms = pMonths();
+  const data = AST.filter(a => S.reg.has(a.region)).map(a => {
+    const dm = DEP.filter(d => d.asset === a.id), nbv = dm.find(d => d.mi === end).nbv;
+    return { name: a.name, region: REG[a.region].name, cost: a.cost, charge: d3.sum(dm.filter(d => ms.includes(d.mi)), d => d.charge), acc: a.cost - nbv, nbv, life: Math.round(nbv / dm[0].charge) };
+  });
+  if (!data.length) { note(host, 'None of the assets sit in the selected regions.'); return; }
+  data.sort((p, q) => (typeof p[depSort.k] === 'string' ? p[depSort.k].localeCompare(q[depSort.k]) : p[depSort.k] - q[depSort.k]) * depSort.dir);
+  const cols = [['name', 'Asset', 0], ['region', 'Region', 0], ['cost', 'Cost', 1], ['charge', S.per === 'fy' ? 'Charge, FYTD' : 'Charge, ' + MON[S.per], 1], ['acc', 'Depreciated', 1], ['nbv', 'Book value', 1], ['life', 'Months left', 1]];
+  const t = el('table'), th = el('thead'), hr = el('tr');
+  cols.forEach(([k, lab, num]) => { const c = el('th', num ? 'r' : ''); c.setAttribute('aria-sort', depSort.k === k ? (depSort.dir > 0 ? 'ascending' : 'descending') : 'none'); const b = el('button', null, lab + (depSort.k === k ? (depSort.dir > 0 ? ' (up)' : ' (down)') : '')); b.type = 'button'; b.onclick = () => { depSort = { k, dir: depSort.k === k ? -depSort.dir : 1 }; drawDepTable(host); }; c.append(b); hr.append(c); });
+  th.append(hr); t.append(th);
+  const tb = el('tbody'), fmt = (k, v) => k === 'life' ? String(v) : (typeof v === 'number' ? gbp(v) : v);
+  data.forEach(d => { const r = el('tr'); cols.forEach(([k, , num]) => r.append(el('td', num ? 'r' : '', fmt(k, d[k])))); tb.append(r); });
+  const tot = el('tr'); cols.forEach(([k, , num], i) => tot.append(el('td', num ? 'r' : '', i === 0 ? 'Total' : ['cost', 'charge', 'acc', 'nbv'].includes(k) ? gbp(d3.sum(data, d => d[k])) : '')));
+  tot.style.fontWeight = 700; tb.append(tot); t.append(tb); host.append(t);
+}
+
+// ---------------------------------------------------------------- how it is built
+function drawArch(host) {
+  host.textContent = '';
+  const facts = DATA.meta.tables, dims = ['dim_date', 'dim_customer', 'dim_item', 'dim_region', 'dim_account', 'dim_supplier', 'dim_project', 'dim_asset'];
+  const w = Math.max(240, Math.floor(host.clientWidth)), n = t => (DATA[t] ? DATA[t].r.length : 0);
+  if (w >= 780) {
+    const fh = 44, H = Math.max(facts.length * fh + 20, 340), fw = 270, dw = 150, svg = d3.select(host).append('svg').attr('width', w).attr('height', H).attr('viewBox', `0 0 ${w} ${H}`).attr('role', 'img')
+      .attr('aria-label', 'Star schema diagram: nine fact tables joined to eight shared dimension tables');
+    const cx = (w - fw) / 2, left = dims.slice(0, 4), right = dims.slice(4), dy = i => 10 + i * ((H - 20) / 4) + ((H - 20) / 4 - 34) / 2, fy = i => 10 + i * ((H - 20) / facts.length) + ((H - 20) / facts.length - 38) / 2;
+    const dpos = {}; left.forEach((d, i) => { dpos[d] = { x: 0, y: dy(i), side: 'l' }; }); right.forEach((d, i) => { dpos[d] = { x: w - dw, y: dy(i), side: 'r' }; });
+    const edges = []; facts.forEach((f, i) => f[3].split(', ').filter(s => s.startsWith('dim_')).forEach(d => edges.push({ f: f[0], d, i })));
+    const eg = svg.append('g').selectAll('path').data(edges).join('path').attr('d', e => { const p = dpos[e.d], x1 = p.side === 'l' ? dw : w - dw, x2 = p.side === 'l' ? cx : cx + fw, y1 = p.y + 17, y2 = fy(e.i) + 19, mx = (x1 + x2) / 2; return `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`; })
+      .style('fill', 'none').style('stroke', 'var(--axis)').attr('stroke-width', 1).attr('opacity', 0.55);
+    const hl = (f) => eg.attr('opacity', e => !f ? 0.55 : (e.f === f || e.d === f) ? 1 : 0.1).attr('stroke-width', e => f && (e.f === f || e.d === f) ? 2 : 1);
+    const box = (g, x, y, ww, hh, t1, t2, fill) => { g.append('rect').attr('x', x).attr('y', y).attr('width', ww).attr('height', hh).attr('rx', 5.6).style('fill', fill).style('stroke', 'var(--line)'); g.append('text').attr('x', x + 8).attr('y', y + 15).style('fill', 'var(--ink)').style('font-weight', 600).text(t1); g.append('text').attr('x', x + 8).attr('y', y + hh - 7).text(fitText(t2, ww - 14, 5.8)); };
+    dims.forEach(d => { const g = svg.append('g').attr('tabindex', 0).attr('role', 'img').attr('aria-label', `${d}, ${n(d)} rows`).on('pointerenter focus', () => hl(d)).on('pointerleave blur', () => hl(null)); box(g, dpos[d].x, dpos[d].y, dw, 34, d, n(d) + ' rows', 'var(--bg)'); });
+    facts.forEach((f, i) => { const g = svg.append('g').attr('tabindex', 0).attr('role', 'img').attr('aria-label', `${f[0]}: ${f[1]}. Xero source: ${f[2]}. Joins ${f[3]}`).on('pointerenter focus', () => hl(f[0])).on('pointerleave blur', () => hl(null)); box(g, cx, fy(i), fw, 38, f[0] + ' (' + n(f[0]) + ')', f[2], 'var(--panel)'); });
+  } else note(host, 'The star diagram needs a wider screen; the table below lists every table, its grain, its Xero endpoint and what it joins to.');
+  const th = $('#c-tables'); th.textContent = '';
+  const t = el('table'), hd = el('tr'); ['Fact table', 'Grain', 'Rows', 'Xero API source', 'Joins to'].forEach((h, i) => hd.append(el('th', i === 2 ? 'r' : '', h)));
+  t.append(el('thead')); t.firstChild.append(hd); const tb = el('tbody');
+  facts.forEach(f => { const r = el('tr'); [f[0], f[1], String(n(f[0])), f[2], f[3]].forEach((v, i) => r.append(el('td', i === 2 ? 'r' : '', v))); tb.append(r); });
+  const dr = el('tr'); dr.append(el('td', null, 'Dimensions'), el('td', null, 'Shared lookups'), el('td', 'r', String(d3.sum(dims, n))), el('td', null, 'Contacts, Items, Accounts, TrackingCategories, Assets, Projects, plus a daily calendar'), el('td', null, ''));
+  tb.append(dr); t.append(tb); th.append(t);
+}
+
+// ---------------------------------------------------------------- cards, tabs, slicers
+const DRAW = { waterfall: drawWaterfall, combo: drawCombo, treemap: drawTreemap, heat: drawHeat, bubble: drawBubble, aged: drawAged, swarm: drawSwarm, cashwf: drawCashWf, runway: drawRunway,
+  bullets: drawBullets, exptree: drawExpTree, payline: drawPayline, slope: drawSlope, dumb: drawDumbbell, assetarea: drawAssets };
+function cardInit() {
+  $$('.card[data-id]').forEach(c => {
+    const id = c.dataset.id, ch = $('.ch', c);
+    if (id !== 'deptable') {
+      const b = el('button', 'tvb', 'Table'); b.type = 'button'; b.setAttribute('aria-pressed', 'false'); b.setAttribute('aria-label', 'Show the data behind this chart as a table');
+      b.onclick = () => { const on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(on)); c.dataset.tv = on ? '1' : ''; showTv(c); };
+      ch.append(b); const tv = el('div', 'tv'); tv.hidden = true; c.append(tv);
+    }
+    const sc = el('span', 'scope'); ch.insertBefore(sc, ch.lastElementChild && id !== 'deptable' ? ch.lastElementChild : null);
+  });
+}
+function renderTable(host, t) {
+  host.textContent = '';
+  const tb = el('table'), hd = el('tr'); t.head.forEach((h, i) => hd.append(el('th', i ? 'r' : '', h)));
+  const th = el('thead'); th.append(hd); tb.append(th);
+  const body = el('tbody'); t.rows.forEach(r => { const tr = el('tr'); r.forEach((v, i) => tr.append(el('td', i ? 'r' : '', String(v)))); body.append(tr); }); tb.append(body); host.append(tb);
+}
+function showTv(card) {
+  const id = card.dataset.id, tv = $('.tv', card), ch = $('.chart', card), on = !!card.dataset.tv;
+  if (!tv || !ch) return;
+  if (on && TBL[id]) renderTable(tv, TBL[id]);
+  tv.hidden = !on; ch.hidden = on;
+}
+function drawCard(card) {
+  const id = card.dataset.id, scope = (card.dataset.scope || '').split(' ').filter(Boolean), ig = ignoredBy(scope);
+  card.classList.toggle('ignored', ig.length > 0);
+  const sc = $('.scope', card); if (sc) sc.textContent = ig.length ? 'Not filtered by ' + ig.join(', ') : scopeText(scope);
+  if (id === 'deptable') { drawDepTable($('#c-deptable')); return; }
+  const host = $('.chart', card); if (!host) return;
+  if (card.dataset.tv) host.hidden = false;
+  TBL[id] = DRAW[id](host);
+  showTv(card);
+}
+function drawActive() {
+  hideTip();
+  const p = $('#p-' + S.tab);
+  if (S.tab === 'overview') { drawKpis(); }
+  if (S.tab === 'how') { drawArch($('#c-arch')); return; }
+  $$('.card[data-id]', p).forEach(drawCard);
+}
+function fire() { memo.clear(); syncSlicers(); drawChips(); drawActive(); }
+
+function buildSlicers() {
+  const rg = $('#sl-region');
+  REG.forEach(r => { const lab = el('label'), inp = el('input'); inp.type = 'checkbox'; inp.value = r.id; inp.checked = true; const sp = el('span'); const dot = el('i'); dot.style.background = slot(r.id); sp.append(dot, document.createTextNode(r.name)); lab.append(inp, sp); rg.append(lab);
+    inp.onchange = () => { S.reg = new Set($$('input', rg).filter(i => i.checked).map(i => +i.value)); fire(); }; });
+  const it = $('#sl-item'); it.append(new Option('All items', -1)); ITM.forEach(i => it.append(new Option(i.name, i.id)));
+  it.onchange = () => { S.item = +it.value; fire(); };
+  const ul = $('#cus-list');
+  CUS.forEach(c => { const li = el('li'), lab = el('label'), inp = el('input'); inp.type = 'checkbox'; inp.value = c.id; lab.append(inp, document.createTextNode(c.name)); li.append(lab); ul.append(li);
+    inp.onchange = () => { const ck = $$('input', ul).filter(i => i.checked).map(i => +i.value); S.cus = (ck.length === CUS.length || !ck.length) ? new Set() : new Set(ck); fire(); }; });
+  $('#cus-all').onclick = () => { S.cus = new Set(); fire(); };
+  $('#cus-q').oninput = e => { const q = e.target.value.toLowerCase(); $$('li', ul).forEach((li, i) => { li.hidden = !CUS[i].name.toLowerCase().includes(q); }); };
+  $$('#sl-period button').forEach(b => { b.onclick = () => { S.per = b.dataset.p === 'fy' ? 'fy' : +b.dataset.p; fire(); }; });
+  $('#reset').onclick = () => { S.per = DEFAULT_PER; S.reg = new Set(REG.map(r => r.id)); S.cus = new Set(); S.item = -1; $('#cus-q').value = ''; $$('#cus-list li').forEach(li => { li.hidden = false; }); fire(); };
+  document.addEventListener('click', e => { const d = $('#sl-cust'); if (d.open && !d.contains(e.target)) d.open = false; });
+  document.addEventListener('keydown', e => { const d = $('#sl-cust'); if (e.key === 'Escape' && d.open) { d.open = false; $('#cus-sum').focus(); } });
+}
+function syncSlicers() {
+  $$('#sl-period button').forEach(b => b.setAttribute('aria-pressed', String((b.dataset.p === 'fy' ? 'fy' : +b.dataset.p) === S.per)));
+  $$('#sl-region input').forEach(i => { i.checked = S.reg.has(+i.value); });
+  $$('#cus-list input').forEach(i => { i.checked = !S.cus.size || S.cus.has(+i.value); });
+  $('#sl-item').value = String(S.item);
+  $('#cus-sum').textContent = !S.cus.size ? 'All customers' : S.cus.size === 1 ? CUS[[...S.cus][0]].name : S.cus.size + ' customers';
+}
+function drawChips() {
+  const h = $('#chips'); h.textContent = '';
+  const chip = (txt, off) => { const c = el('span', 'chip', txt), b = el('button', null, 'x'); b.type = 'button'; b.setAttribute('aria-label', 'Remove filter: ' + txt); b.onclick = off; c.append(b); h.append(c); };
+  if (S.per !== DEFAULT_PER) chip('Period: ' + (S.per === 'fy' ? 'FYTD' : MLONG[S.per]), () => { S.per = DEFAULT_PER; fire(); });
+  if (regActive()) chip('Region: ' + ([...S.reg].sort().map(r => REG[r].name.replace('Region ', '')).join(', ') || 'none'), () => { S.reg = new Set(REG.map(r => r.id)); fire(); });
+  if (S.cus.size > 2) chip('Customers: ' + S.cus.size + ' selected', () => { S.cus = new Set(); fire(); });
+  else [...S.cus].forEach(c => chip('Customer: ' + CUS[c].name, () => { S.cus.delete(c); fire(); }));
+  if (S.item >= 0) chip('Item: ' + ITM[S.item].name, () => { S.item = -1; fire(); });
+}
+const TABS = ['overview', 'sales', 'cash', 'costs', 'projects', 'how'];
+function show(tab, focus) {
+  if (!TABS.includes(tab)) tab = 'overview';
+  S.tab = tab;
+  TABS.forEach(t => { const b = $('#t-' + t), on = t === tab; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; $('#p-' + t).hidden = !on; });
+  if (focus) $('#t-' + tab).focus();
+  history.replaceState(null, '', '#' + tab);
+  fire();
+}
+function initTabs() {
+  const tabs = $('#tabs');
+  tabs.addEventListener('click', e => { const b = e.target.closest('[role=tab]'); if (b) show(b.dataset.tab); });
+  tabs.addEventListener('keydown', e => {
+    const i = TABS.indexOf(S.tab); let n = null;
+    if (e.key === 'ArrowRight') n = (i + 1) % TABS.length; else if (e.key === 'ArrowLeft') n = (i + TABS.length - 1) % TABS.length; else if (e.key === 'Home') n = 0; else if (e.key === 'End') n = TABS.length - 1;
+    if (n != null) { e.preventDefault(); show(TABS[n], true); }
+  });
+  window.addEventListener('hashchange', () => { const t = location.hash.slice(1); if (TABS.includes(t) && t !== S.tab) show(t); });
+}
+function legends() {
+  const lg = $('#lg-items'); ITM.forEach(i => { const s = el('span'), b = el('i'); b.style.background = slot(i.id); b.style.borderRadius = '50%'; s.append(b, document.createTextNode(i.name)); lg.append(s); });
+}
+
+// ---------------------------------------------------------------- start
+buildSlicers(); cardInit(); initTabs(); legends();
+let rz; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { memo.clear(); drawActive(); }, 150); });
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => drawActive());
+new MutationObserver(() => drawActive()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+show(location.hash.slice(1) || 'overview');
+})();
+
+</script>
+</body>
+</html>
